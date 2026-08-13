@@ -4,7 +4,7 @@
 > 更新日期：2026-08-13
 > 权威范围：GitHub 仓库身份、快照、Webhook、调度、队列、额度、Worker、访问撤销与保留策略
 
-本文是 [系统架构](../architecture.md) 中 GitHub 同步子系统的唯一实现规范。系统架构保留产品承诺、技术边界与验收目标；本文件唯一维护列级 schema、状态机、事务边界和运行参数。两者冲突时不得自行择一实现，必须先修正文档使其重新一致。
+本文是 [系统架构](system.md) 中 GitHub 同步子系统的唯一实现规范。产品承诺由 [产品权威](../authority/product.md) 维护，系统架构保留技术边界与验收目标；本文件唯一维护列级 schema、状态机、事务边界和运行参数。三者冲突时不得自行择一实现，必须先修正文档使其重新一致。
 
 ## 1. 边界与依赖
 
@@ -12,12 +12,12 @@
 
 本规范依赖：
 
-- [目录与分类](../architecture.md#61-目录与分类) 提供 `resources` 及人工目录所有权。
-- [提交与 Bench](../architecture.md#64-提交与-bench) 提供 submission source identity 与触发入口。
-- [Edge Function 部署与认证矩阵](../architecture.md#75-edge-function-部署与认证矩阵) 规定 webhook/worker 的物理入口和认证方式。
-- [GitHub 抓取设计](../architecture.md#9-github-抓取设计) 规定抓取字段、产品同步承诺与页面语义。
-- [容量假设与非功能指标](../architecture.md#12-容量假设与非功能指标) 规定规模和 SLO。
-- [GitHub 同步验收](../architecture.md#github-同步) 规定交付门槛。
+- [目录与分类](system.md#61-目录与分类) 提供 `resources` 及人工目录所有权。
+- [提交与 Bench](system.md#64-提交与-bench) 提供 submission source identity 与触发入口。
+- [Edge Function 部署与认证矩阵](system.md#75-edge-function-部署与认证矩阵) 规定 webhook/worker 的物理入口和认证方式。
+- [GitHub 抓取设计](system.md#9-github-抓取设计) 规定抓取字段与页面语义；产品同步承诺见 [产品权威](../authority/product.md#3-已确定与待确认)。
+- [容量假设与非功能指标](system.md#12-容量假设与非功能指标) 规定规模和 SLO。
+- [GitHub 同步验收](system.md#github-同步) 规定交付门槛。
 
 ## 2. 精确数据模型
 
@@ -570,7 +570,7 @@ Recovery work 每次先 drain 本 App 中到期的持久 redelivery requests，�
 
 ## 7. Scheduling policy
 
-`repository_sync_policies` 是[分层同步承诺](../architecture.md#95-同步策略)的持久状态。Cron 只做 `auto_sync = true AND next_sync_at <= now()` 的 due scan 与幂等 enqueue；可以按队列深度和最近 bucket 观察值做粗粒度节流，但不得把它称为真实 quota 判定。只有 job 成功 insert 或 merge 后才更新 `last_scheduled_at/next_sync_at`，未成功入队绝不推进 schedule。
+`repository_sync_policies` 是[分层同步承诺](system.md#95-同步策略)的持久状态。Cron 只做 `auto_sync = true AND next_sync_at <= now()` 的 due scan 与幂等 enqueue；可以按队列深度和最近 bucket 观察值做粗粒度节流，但不得把它称为真实 quota 判定。只有 job 成功 insert 或 merge 后才更新 `last_scheduled_at/next_sync_at`，未成功入队绝不推进 schedule。
 
 `sync_cycle_id/sync_cycle_job_id/sync_cycle_required_generation/cycle_started_at/expected_by_at` 表达尚未满足的最早同步周期：只有当前没有 unresolved cycle 时，首次成功 enqueue 才创建 cycle，并以本次 due boundary 加该 tier 的 grace 计算并冻结 deadline；enqueue/merge 先递增 job generation，再把 job ID、cycle ID 与该 generation 分别写入 policy 和 job，claim 再把 cycle ID 复制到 `github_sync_runs`（run 自身已有 job ID/generation）。后续 Cron 对同一 queued/retry/leased job 的 merge 只推进日历上的 `next_sync_at`，绝不能覆盖旧 cycle/deadline。若绑定 job 进入 `dead` 而 cycle 未满足，replacement enqueue 必须保留原 cycle/deadline，并在一个 policy/job 行锁事务内把 `sync_cycle_job_id` rebind 到新 job、把 required generation 改为新 job 本次 enqueue 后的 generation。只有成功发布 snapshot 的完成事务同时满足 `run.job_id = policy.sync_cycle_job_id`、`run.sync_cycle_id = policy.sync_cycle_id`、`run.generation >= policy.sync_cycle_required_generation`、snapshot 属于该 run/head 时，才能以 CAS 清除旧 cycle；较早/旧 job/manual/null-cycle run 都不能误清。失败、quota defer或 generation merge保留原值。页面 stale 判定因此读取最早未满足周期，不会被后续 Cron 推迟。
 

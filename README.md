@@ -21,8 +21,10 @@ npm run build
 
 ## 文档
 
-- [系统架构：评分、GitHub 同步与资源详情](docs/architecture.md)
 - [文档索引](docs/README.md)
+- [产品权威：范围、数据所有权与产品决策](docs/authority/product.md)
+- [系统架构：数据模型、实现顺序与验收](docs/architecture/system.md)
+- [代码接口目录](docs/interfaces/README.md)
 
 ## 当前边界
 

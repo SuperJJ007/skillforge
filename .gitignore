@@ -19,6 +19,8 @@ dist-ssr
 .claude/
 .codex/
 .agents/
+# Local-only planning and handoff material; durable conclusions belong in docs/.
+/.work/
 .DS_Store
 *.suo
 *.ntvs*

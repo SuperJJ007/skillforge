@@ -2,8 +2,8 @@
 
 > 状态：架构基线，实施待办<br>
 > 更新日期：2026-08-13<br>
-> 范围：资源目录与搜索、作者署名、社区五星评分、GitHub 数据同步、资源详情页，以及既有原型页面的迁移边界
-> 命名：仓库名为 `skillforge`，当前界面品牌文字为 “SciForge”；本文统一称 SkillForge，最终品牌名另行确认。
+> 范围：系统形态、分类模型、数据模型、API、GitHub 同步架构、既有原型页面迁移、容量与验收
+> 产品范围、数据所有权与产品决策见唯一的 [产品权威](../authority/product.md)。
 
 ## 1. 结论
 
@@ -37,23 +37,7 @@ flowchart LR
 
 ## 2. 产品边界
 
-### 2.1 要解决的问题
-
-1. 用户能按适用范围或学科查找 Skill、MCP、Plugin。
-2. 详情页能明确回答：它是什么、怎么安装、需要什么环境和权限、仓库是否仍在维护、信息何时同步。
-3. 登录用户能给资源打 1–5 星，可以修改或清除，不做评论。
-4. GitHub 信息可以自动更新，但不能覆盖 SkillForge 的人工分类、编辑说明、安全结论或 Bench 证据。
-5. 每个事实都能说明来源；缺数据时显示“未知”或“未验证”，不能生成看似真实的默认值。
-
-### 2.2 明确不做
-
-- 不做评论、短评、点赞、关注动态和公开评分用户列表。
-- 不把 GitHub Stars 当作社区评分。
-- 不把 Bench 分数画成社区五星。
-- 不根据 GitHub Stars、Forks 或 Release 推测安装人数。
-- 不抓取或执行仓库代码，不自动运行 README 中的命令。
-- 不抓 `.env`、Token、私有文件、Issue 评论、PR 评论或完整仓库历史。
-- 不为当前规模拆分评分服务、目录服务和 GitHub 服务。
+产品范围、明确不做与事实展示规则只在 [产品权威：产品边界](../authority/product.md#1-产品边界) 维护。系统设计不得在此复制或覆写这些决策。
 
 ## 3. 当前代码基线与本轮范围
 
@@ -95,35 +79,7 @@ Home、Detail、Submit、Author 与 API 切到 canonical taxonomy 后，生产�
 
 ## 4. 数据所有权与可信边界
 
-详情页会组合四类数据，但四类数据必须分开保存。
-
-| 数据域 | 示例 | 唯一写入方 | 能否被 GitHub 覆盖 |
-| --- | --- | --- | --- |
-| 人工目录数据 | 标题、中文简介、类型、适用范围、学科、审核状态 | SkillForge 编辑/审核流程 | 否 |
-| GitHub 快照 | Stars、Forks、协议、README、Release、最近推送 | GitHub 同步任务 | 仅覆盖同一 GitHub 数据域 |
-| 社区评分 | 平均分、人数、用户自己的评分 | 登录用户经 Rating API | 否 |
-| Bench / 学术证据 | 测试版本、分数、方法、DOI、引用 | 独立评测或证据流程 | 否 |
-
-API 返回时也保持这些命名空间，不把它们压成一组来源不明的字段：
-
-```json
-{
-  "resource": {},
-  "classification": {},
-  "communityRating": {},
-  "github": {},
-  "benchmark": null,
-  "viewer": {}
-}
-```
-
-所有自动抓取或计算结果至少保存：
-
-- `source`
-- `source_url`（适用时）
-- `fetched_at` 或 `computed_at`
-- `source_revision`（commit SHA、release tag 或 benchmark version）
-- `parser_version`（结构化解析时）
+数据域的唯一写入方、覆盖边界、API 命名空间与来源元数据只在 [产品权威：数据所有权与可信边界](../authority/product.md#2-数据所有权与可信边界) 维护。下面的 schema、API 和 Worker 设计必须满足该边界，但不能建立第二份权威说明。
 
 ## 5. 统一分类模型
 
@@ -309,7 +265,7 @@ catalog_search_state
 
 ### 6.2 仓库与 GitHub 快照
 
-GitHub 同步的列级 schema、状态机、事务边界、租约、额度算法、Worker 参数、访问撤销与保留策略只在 [GitHub 同步实现规范](specs/github-sync.md) 维护。本节保留架构关系和不可退化不变量，不复制实现细节。
+GitHub 同步的列级 schema、状态机、事务边界、租约、额度算法、Worker 参数、访问撤销与保留策略只在 [GitHub 同步实现规范](github-sync.md) 维护。本节保留架构关系和不可退化不变量，不复制实现细节。
 
 | 实体组 | 主要实体 | 架构职责 |
 | --- | --- | --- |
@@ -334,7 +290,7 @@ GitHub 同步的列级 schema、状态机、事务边界、租约、额度算法
 9. 临时失败可以服务最后好快照；撤权、私有化、删除或身份不确定必须 fail closed，并按规范清理正文和已登记派生缓存。
 10. Snapshot、artifact、run 与 job 的历史保留必须有容量上界；删除服从 retention closure 和外键顺序。
 
-产品同步周期与页面承诺见第 9.5 节，抓取范围见第 9.2–9.4 节，容量与 SLO 见第 12 节；实现和验收都必须引用同一份 [GitHub 同步实现规范](specs/github-sync.md)，不得在其他章节建立第二套队列或额度规则。
+产品同步周期与页面承诺见第 9.5 节，抓取范围见第 9.2–9.4 节，容量与 SLO 见第 12 节；实现和验收都必须引用同一份 [GitHub 同步实现规范](github-sync.md)，不得在其他章节建立第二套队列或额度规则。
 
 ### 6.3 用户与评分
 
@@ -505,7 +461,7 @@ GitHub source 相关事务还必须共享 repository-state 串行化：sync enqu
 
 `create_submission(...)` 取得 `submission-user:{submitter_id}` 锁后，重验 profile 仍存在且 `account_status = active`，从 profile 复制内部 `submission_subject_key`，并在同一事务完成 idempotency lookup、滚动窗口检查和 submission INSERT。默认每账号最多成功接收 3 次/分钟、10 次/滚动 24 小时；阈值配置化，只计算真正新建的 submission，相同 subject key、idempotency key 与相同 payload 的重放返回原结果且不重复计数，key 相同但 payload 不同返回 `409 idempotency_conflict`。仓库级策略只限制昂贵 GitHub validation attempt，而不是锁死所有人的 POST；不同 monorepo 资源保留各自 submission，是否复用既有 target-level validation coverage、何时必须新抓取只按同步规范执行。
 
-Submission API 不直接调用 GitHub。首次提交先按 `submission_id + repository_url_fingerprint` 进入 [repository resolution queue](specs/github-sync.md#21-repository-resolution)，由同一 Worker quota 权威执行固定 GitHub metadata lookup；取得稳定 node ID 并原子绑定 `resolved_repository_id` 后，才进入普通 repository sync。首次成功 claim 前或 quota defer 时 submission 保持 `received` 并显示等待；attempt 已启动后的临时 retry 才保持 `validating`，两者都不伪装成验证失败。账号 admission 只控制请求接收，仓库 validation window 只控制昂贵 attempt，二者都不能绕过 Worker claim 的全局额度权威。
+Submission API 不直接调用 GitHub。首次提交先按 `submission_id + repository_url_fingerprint` 进入 [repository resolution queue](github-sync.md#21-repository-resolution)，由同一 Worker quota 权威执行固定 GitHub metadata lookup；取得稳定 node ID 并原子绑定 `resolved_repository_id` 后，才进入普通 repository sync。首次成功 claim 前或 quota defer 时 submission 保持 `received` 并显示等待；attempt 已启动后的临时 retry 才保持 `validating`，两者都不伪装成验证失败。账号 admission 只控制请求接收，仓库 validation window 只控制昂贵 attempt，二者都不能绕过 Worker claim 的全局额度权威。
 
 临时错误在普通 retry 期间保持 `validating`，提交查询返回安全的 `retryAfter`；耗尽 `max_attempts` 后，dead-job reconciler 在同一事务把受影响 submission 改为 `validation_failed`、写公开错误码和 review event，并在 canonical lock 内按与 reject 相同的规则处理现有 duplicate。Editor/admin 可以通过受控 retry API 执行 `validation_failed → received`；用户可修复的问题始终进入 `needs_input`。任何自动路径都不能进入 `rejected`。
 
@@ -983,7 +939,7 @@ Maintainer PUT body 固定为 `{ expectedCatalogRevision, expectedCurrentValidFr
 
 `publish-draft` body 固定为 `{ expectedCatalogRevision, validationResultId, reasonCode, reasonText }`；snapshot 只从 immutable result 的 FK 派生，不接受第二个可能冲突的 snapshot ID。`archive` body 为 `{ expectedCatalogRevision, reasonCode, reasonText }`，归档时取得 source lock、从公开搜索投影移除资源，递增一次 resource catalog revision 和一次公开 search revision，但保留评分与审计且停止自动公开 GitHub 正文。两者都是 admin-only，并把 reason code/hash 与 180 天短期文本写入 catalog event。`PATCH resources` body 为 `{ expectedCatalogRevision, patch }`，其中 `patch` 只能包含 review schema 的人工目录字段子集；任何 `slug/type/status/repositoryId/snapshotId/validationResultId/rating/benchmark/github` 键均返回 `422 invalid_catalog_patch`。`PATCH`、`prepare-source`、`publish-draft`、`archive` 和 maintainer mutation 在成功时都将该 resource 的 `catalog_revision` 递增一次；冲突返回 `409 catalog_revision_conflict` 及当前 revision，不部分执行。
 
-GitHub webhook 不使用伪 `/api/internal/github/webhook` 路由。GitHub App 直接配置固定的 `github-webhook` Supabase Function URL，并以 HMAC 验签；HTTP 响应只完成去重与持久入队，不等待完整抓取。Cron worker 继续使用固定 Function URL 和 named secret。手动同步只允许 editor/admin 调用上述 Admin API。Webhook ingress/fan-out 服从 [同步规范第 6 节](specs/github-sync.md#6-webhook-ingress-与-fan-out)，resolution 与普通队列合并、lease/generation 服从 [同步规范第 10 节](specs/github-sync.md#10-queue-state-machine)。
+GitHub webhook 不使用伪 `/api/internal/github/webhook` 路由。GitHub App 直接配置固定的 `github-webhook` Supabase Function URL，并以 HMAC 验签；HTTP 响应只完成去重与持久入队，不等待完整抓取。Cron worker 继续使用固定 Function URL 和 named secret。手动同步只允许 editor/admin 调用上述 Admin API。Webhook ingress/fan-out 服从 [同步规范第 6 节](github-sync.md#6-webhook-ingress-与-fan-out)，resolution 与普通队列合并、lease/generation 服从 [同步规范第 10 节](github-sync.md#10-queue-state-machine)。
 
 提交接口是会触发外部请求和后台解析的受保护入口：
 
@@ -1047,7 +1003,7 @@ Supabase 的 gateway JWT 校验是 function 级配置，不能把公开 GET 和�
 
 Netlify 把稳定公共合同路由重写到物理 Function：只读 `/api/v1/resources*`、`/api/v1/authors*`、`/api/v1/fields*`、`/api/v1/tags*` → `catalog-api`；`/api/v1/me/*` 与 `/api/v1/submissions*` → `account-api`；`/api/internal/admin/*` → `admin-api`；GitHub webhook 与 worker 只使用各自固定 Supabase Function URL，不经过公开 `/api/v1`。生产浏览器只允许同站 `/api`，Edge CORS allowlist 仅含正式站点与显式 preview origin；预检、method 和 cache headers 由共享 middleware 契约测试。
 
-Netlify 的 API rewrite 必须声明在 SPA catch-all 之前，并用端到端测试验证每个合同路径到达正确 Function 而不是返回前端 HTML。Webhook 的固定 Function URL/HMAC 所有权由本节矩阵规定，delivery 行为见 [同步规范第 6 节](specs/github-sync.md#6-webhook-ingress-与-fan-out)；Cron/Worker 的 secret、timeout 与执行预算见 [同步规范第 9 节](specs/github-sync.md#9-worker-invocation)。
+Netlify 的 API rewrite 必须声明在 SPA catch-all 之前，并用端到端测试验证每个合同路径到达正确 Function 而不是返回前端 HTML。Webhook 的固定 Function URL/HMAC 所有权由本节矩阵规定，delivery 行为见 [同步规范第 6 节](github-sync.md#6-webhook-ingress-与-fan-out)；Cron/Worker 的 secret、timeout 与执行预算见 [同步规范第 9 节](github-sync.md#9-worker-invocation)。
 
 ## 8. 社区五星评分设计
 
@@ -1204,22 +1160,22 @@ sequenceDiagram
 5. 解析结果与原始 blob SHA 一起保存，任何解析器升级都可重跑。
 6. 自动抓取只形成候选数据，发布仍经过人工审核。
 
-快照组装、状态机和 latest 晋升的精确合同见 [GitHub 同步实现规范](specs/github-sync.md#4-snapshot-状态机与发布)；审核与发布使用第 6.5 节的 Admin API/RPC，不直接修改同步表。
+快照组装、状态机和 latest 晋升的精确合同见 [GitHub 同步实现规范](github-sync.md#4-snapshot-状态机与发布)；审核与发布使用第 6.5 节的 Admin API/RPC，不直接修改同步表。
 
 `GET /releases/latest` 没有非 draft、非 prerelease 的完整发布时会返回 404；这里记录为 `release = absent`，不让整个同步失败，页面日期使用 `published_at`。Community Profile 对 fork 不适用，记录 `not_applicable`，页面只能称“社区文件完整度”。
 
-抓取大小、目录深度和条目数使用 [同步规范中的版本化安全限额](specs/github-sync.md#51-fetch-safety-limits)。超过限额写明确 error/limit code 并按同步规范的可发布矩阵决定“允许 partial”或“不更新 latest”，不静默截断后假装完整。
+抓取大小、目录深度和条目数使用 [同步规范中的版本化安全限额](github-sync.md#51-fetch-safety-limits)。超过限额写明确 error/limit code 并按同步规范的可发布矩阵决定“允许 partial”或“不更新 latest”，不静默截断后假装完整。
 
 ### 9.5 同步策略
 
 - **已安装 GitHub App**：订阅 `push`、`release`、`repository`、`installation` 和 `installation_repositories` 等必要事件，并承诺每日一次兜底检查。删除、暂停、移除或私有化事件优先更新访问状态，再决定是否同步内容。
 - **未安装 App 的公开仓库**：只能走独立匿名预算，不承诺每日更新。新提交立即持久入队并提高优先级，但实际执行服从匿名 quota，不承诺完成时限；已发布资源默认按 7–30 天的预算分层检查。近期访问或人工标记只能提高队列优先级，不能绕过全局配额。页面访问只幂等入队并返回现有快照，绝不等待实时 GitHub 请求。
 - 匿名容量规划以 GitHub 当前未认证 REST 的 60 请求/小时/IP 为上限基线，但共享出口可能更低；capacity planner 根据实际 `x-ratelimit-*`、预计 endpoint 成本和第 12 节统一维护的安全系数调整 `desired_interval`。某个 work item 此刻能否执行仍只由 Worker claim/reservation 决定。容量不足时延长低优先级周期并在详情页如实显示“同步周期”和 `checked_at`，不能借用无关 installation Token。
-- Webhook 只负责验证、去重和持久入队；delivery recovery 的 cursor、租约、redelivery 与幂等状态机只在 [同步规范第 6 节](specs/github-sync.md#6-webhook-ingress-与-fan-out) 维护。每日兜底不能替代投递巡检。
+- Webhook 只负责验证、去重和持久入队；delivery recovery 的 cursor、租约、redelivery 与幂等状态机只在 [同步规范第 6 节](github-sync.md#6-webhook-ingress-与-fan-out) 维护。每日兜底不能替代投递巡检。
 - 无论哪一层都先检查 metadata/head SHA；仅在表示变化或对应 part 到期时抓 languages、release、community 和允许列表文件，避免每轮固定消耗 5–8 个请求。
-- 每个稳定 HTTP 表示按 [GitHub 同步实现规范](specs/github-sync.md#5-conditional-http-cache) 保存 ETag/Last-Modified；轮询时发条件请求，`304` 只更新 `checked_at`。
+- 每个稳定 HTTP 表示按 [GitHub 同步实现规范](github-sync.md#5-conditional-http-cache) 保存 ETag/Last-Modified；轮询时发条件请求，`304` 只更新 `checked_at`。
 - 读取 `x-ratelimit-*` 与 `retry-after`，遇到限制后按官方建议等待并指数退避，不能持续重试。
-- 临时同步失败时继续服务最后一次成功快照，并按 part 展示同步时间。stale 阈值按 tier 计算：已安装仓库 `last_success_at + 72 hours`；匿名仓库使用入队时冻结的 `expected_by_at + max(48 hours, desired_interval × 0.25)`，而不是已被推进的下一轮 `next_sync_at`。正常 7–30 天周期本身不算过期。访问撤销、私有化、删除和 403/404 不确定状态严格执行 [access revocation 与 read gate](specs/github-sync.md#12-access-revocation-与-read-gate)。
+- 临时同步失败时继续服务最后一次成功快照，并按 part 展示同步时间。stale 阈值按 tier 计算：已安装仓库 `last_success_at + 72 hours`；匿名仓库使用入队时冻结的 `expected_by_at + max(48 hours, desired_interval × 0.25)`，而不是已被推进的下一轮 `next_sync_at`。正常 7–30 天周期本身不算过期。访问撤销、私有化、删除和 403/404 不确定状态严格执行 [access revocation 与 read gate](github-sync.md#12-access-revocation-与-read-gate)。
 
 ### 9.6 Webhook 安全与幂等
 
@@ -1230,7 +1186,7 @@ sequenceDiagram
 - App 私钥、Webhook secret 和安装 Token 只存在服务端 Secret Manager 中。
 - 日志不记录 Token、完整请求头、环境变量值或仓库文件正文。
 
-delivery 的 0..N job fan-out、generation merge 和清理顺序只在 [GitHub 同步实现规范](specs/github-sync.md#6-webhook-ingress-与-fan-out) 维护。
+delivery 的 0..N job fan-out、generation merge 和清理顺序只在 [GitHub 同步实现规范](github-sync.md#6-webhook-ingress-与-fan-out) 维护。
 
 ### 9.7 外部内容安全
 
@@ -1257,7 +1213,7 @@ delivery 的 0..N job fan-out、generation merge 和清理顺序只在 [GitHub �
 
 GitHub part 可以各有不同 `fetched_at/checked_at`；页面不能用一个总时间掩盖 Release 成功但 README 失败的情况。仓库访问状态不是 `accessible` 时，不渲染缓存正文。
 
-详情页只能读取 [已发布的 latest snapshot](specs/github-sync.md#4-snapshot-状态机与发布)，并在渲染 GitHub 正文前执行 [access read gate](specs/github-sync.md#12-access-revocation-与-read-gate)。
+详情页只能读取 [已发布的 latest snapshot](github-sync.md#4-snapshot-状态机与发布)，并在渲染 GitHub 正文前执行 [access read gate](github-sync.md#12-access-revocation-与-read-gate)。
 
 推荐前端组件边界：
 
@@ -1317,7 +1273,7 @@ supabase/
 以下是首版设计假设，不是对未来规模的无限承诺；任一上限持续超过 80% 时必须重新做容量评审：
 
 - 首年 500–2,000 个 `published` 资源、10,000 个账号以内、100,000 条当前评分以内。
-- 搜索基准为 2,000 条 `resource_search_documents`；GitHub 快照历史按 [Retention 与 GC](specs/github-sync.md#13-retention-与-gc) 和实际 artifact 字节单独估算，不把正文无限保存。
+- 搜索基准为 2,000 条 `resource_search_documents`；GitHub 快照历史按 [Retention 与 GC](github-sync.md#13-retention-与-gc) 和实际 artifact 字节单独估算，不把正文无限保存。
 - `rating_change_events` 的理论滥用上界为 75,000,000 行/30 天（10,000 账号 × 50 资源 × 5 次/日 × 30 天）。首版按 `changed_at` 月分区，但保留语义仍是精确 `changed_at < now() - interval '30 days'`：完整过期分区可直接 drop，与当前 30 天窗口重叠的边界分区必须小批删行，不得因月粒度把实际留存扩大到约 60 天。容量验收至少使用 7,500,000 行代表性夹具并外推字节与滚动 COUNT p95，外推不能满足评分 p95 时先降低留存或改专用 rolling counter。
 - 可重复负载剖面固定为 20 个并发客户端、持续 10 分钟且至少 5,000 个完成请求：40% 资源列表、25% 中英文搜索、25% 详情、10% 已认证评分写；列表/搜索 `page_size = 24`，列表响应 ≤ 256 KiB，详情响应 ≤ 1.5 MiB。评分写夹具使用至少 200 个独立账号和 1,000 个资源，预先避开 5/50 与 30/min 限额；429 另跑专门边界场景。每类至少 200 个样本，数据分布使用 2,000 资源/100,000 当前评分基线。
 - 搜索另跑 20 个客户端连续翻 5 页、同时每分钟一次 published 目录变更的 10 分钟一致性剖面；单独报告 `409 cursor_expired` 次数、受影响分页会话比例与第一页重启成功率。`cursor_expired` 不计入 5xx，但重启必须成功且不能出现重复/漏接旧页；该发生率随真实目录编辑频率纳入上线评审。
@@ -1404,13 +1360,13 @@ supabase/
 
 ### GitHub 同步
 
-本节所有实现参数和并发场景以 [GitHub 同步实现规范](specs/github-sync.md) 为唯一权威。
+本节所有实现参数和并发场景以 [GitHub 同步实现规范](github-sync.md) 为唯一权威。
 
 - GitHub App 权限只有 Metadata Read 和 Contents Read。
 - Webhook 签名验证、delivery GUID 去重、REST 数字 delivery ID 分离、同事务持久入队、租约重试和 dead-letter 均有测试。
 - Cron 能按计划唤醒 Worker；attempt budget、停止领取阈值、批次、lease、主动释放、强杀后过期接管和 owner-CAS 均按同步规范测试。
 - Cron 的显式 `pg_net` timeout 必须满足“高于 attempt budget、低于 lease TTL”，并与 `net._http_response` 持久巡检一起通过集成测试；不得依赖扩展默认值。
-- [同步规范第 7–10 节](specs/github-sync.md#7-scheduling-policy)的 due enqueue、统一 resolution/sync/recovery claim、unknown-context bootstrap probe、no-quota、reset probe、lease 与 owner-CAS 分支均有数据库并发测试；验收不在本文件重写这些算法参数。特别覆盖“多个 work reservation 在途时新 header 突然返回 remaining=0”：bucket 能合法落库为 exhausted、不再新 claim，已有 reservation 可各自对账到零。
+- [同步规范第 7–10 节](github-sync.md#7-scheduling-policy)的 due enqueue、统一 resolution/sync/recovery claim、unknown-context bootstrap probe、no-quota、reset probe、lease 与 owner-CAS 分支均有数据库并发测试；验收不在本文件重写这些算法参数。特别覆盖“多个 work reservation 在途时新 header 突然返回 remaining=0”：bucket 能合法落库为 exhausted、不再新 claim，已有 reservation 可各自对账到零。
 - schedule/webhook/submission/catalog/manual/access-revocation/public-confirmation dedupe key、active-job generation/priority 合并和 leased 期间新事件重跑均有并发测试；每个 generation 都有唯一 trigger ledger 行，成功 attempt 只消费 leased generation 范围，并按剩余集合重算 priority。高优先级 webhook/撤权合入 schedule job 后不会继续按 100 执行。
 - installation 和 installation_repositories 的 0..N repository 事件能在同一事务更新 access 并 fan-out/merge jobs；一个 delivery 可合法关联零个或多个 job。
 - 首次 submission 与 catalog/import preflight 在没有 node ID 时都能经 resolution work 持久入队、共享 quota并 fan-in，在稳定 identity 建立后原子转入普通 sync；账户/Admin API 不直连 GitHub，未核实 draft 也有可达发布路径。
@@ -1439,25 +1395,7 @@ supabase/
 
 ## 15. 已确定与待确认
 
-已确定的产品方向：
-
-- 首页核心对象是 Skill、MCP、Plugin。
-- “通用科研”与学科分开，选中后统一过滤三个资源分区。
-- 视觉延续当前简洁卡片风格；首页大标题暂定第 5 套“港湾”配色：`#C5D9ED` × `#EFC5B5`。
-- 社区评分使用 1–5 星，不做评论。
-- GitHub Stars、社区评分和 Bench 分数严格分开。
-- 详情页展示缓存的、带来源的数据，不展示编造默认值。
-- 第一版 API、认证与 Worker 固定使用 Supabase Auth + Edge Functions：前端以 Bearer access JWT 调用，Cron 通过 `pg_cron + pg_net` 唤醒同步 Worker。
-- 中文目录搜索固定使用 PGroonga，并且只索引人工目录投影。
-- 已安装仓库采用 Webhook + 每日兜底；未安装仓库按匿名预算做 7–30 天分层同步。
-- 第一版不做详情预渲染、README 图片代理或 GitHub 正文 CDN 缓存。
-- 当前维护者禁止给自己的资源评分；第一版不收录私有仓库。
-
-仍需确认的产品命名只有：
-
-- 最终对外品牌使用 SkillForge 还是 SciForge。
-
-作者认领、私有仓库、图片代理和更高频未安装仓库同步都属于后续能力，启用时必须新增数据、安全与配额合同；它们不阻塞第一版实施。
+已确定与待确认的产品决策只在 [产品权威：已确定与待确认](../authority/product.md#3-已确定与待确认) 维护。若某项决策影响 schema、API、状态机或验收，应在该权威更新后，再同步修改本文件及相关实现规范。
 
 ## 16. 官方参考
 
