@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from './Navbar';
 import './Layout.css';
 
-const GITHUB_URL = 'https://github.com/HERRY423/SciForge-Hub';
+const GITHUB_URL = 'https://github.com/SuperJJ007/skillforge';
 
 const Layout = ({ children }) => {
   return (

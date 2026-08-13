@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
 
-const GITHUB_URL = 'https://github.com/HERRY423/SciForge-Hub';
+const GITHUB_URL = 'https://github.com/SuperJJ007/skillforge';
 
 const Navbar = () => {
   const { pathname, search } = useLocation();
