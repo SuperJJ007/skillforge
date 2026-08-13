@@ -1,6 +1,21 @@
+import {
+  anthropicScienceAuthors,
+  anthropicScienceResources,
+} from './anthropicScienceCandidates.js';
+import { scienceMcpAuthors, scienceMcpResources } from './scienceMcpCandidates.js';
+import { scienceSkillAuthors, scienceSkillResources } from './scienceSkillCandidates.js';
+
 const freezeItems = (items) => Object.freeze(items.map((item) => Object.freeze(item)));
 
-const createSourceSnapshot = ({ resourceSlug, repositoryUrl, revision, revisionCommittedAt, project }) => Object.freeze({
+const createSourceSnapshot = ({
+  resourceSlug,
+  repositoryUrl,
+  revision,
+  revisionCommittedAt,
+  rootPath = '',
+  manifestPath = 'pyproject.toml',
+  project,
+}) => Object.freeze({
   schemaVersion: 1,
   resourceSlug,
   sourceType: 'official-repository',
@@ -12,6 +27,8 @@ const createSourceSnapshot = ({ resourceSlug, repositoryUrl, revision, revisionC
     revisionCommittedAt,
     fetchedAt: '2026-08-13T08:15:59Z',
     parserVersion: 'manual-first-party-v1',
+    rootPath,
+    manifestPath,
   }),
   project: Object.freeze({
     declaredVersion: project.declaredVersion,
@@ -247,7 +264,7 @@ const arxivSnapshot = createSourceSnapshot({
   },
 });
 
-export const sourceCandidateResources = Object.freeze([
+const coreSourceCandidateResources = Object.freeze([
   Object.freeze({
     slug: 'biomcp',
     title: 'BioMCP',
@@ -274,7 +291,7 @@ export const sourceCandidateResources = Object.freeze([
   }),
 ]);
 
-export const sourceCandidateAuthors = Object.freeze([
+const coreSourceCandidateAuthors = Object.freeze([
   Object.freeze({
     slug: 'genomoncology',
     name: 'GenomOncology',
@@ -287,4 +304,18 @@ export const sourceCandidateAuthors = Object.freeze([
     type: '开发者',
     homepage: 'https://github.com/blazickjp',
   }),
+]);
+
+export const sourceCandidateResources = Object.freeze([
+  ...coreSourceCandidateResources,
+  ...anthropicScienceResources,
+  ...scienceSkillResources,
+  ...scienceMcpResources,
+]);
+
+export const sourceCandidateAuthors = Object.freeze([
+  ...coreSourceCandidateAuthors,
+  ...anthropicScienceAuthors,
+  ...scienceSkillAuthors,
+  ...scienceMcpAuthors,
 ]);

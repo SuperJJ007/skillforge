@@ -44,7 +44,7 @@ flowchart LR
 当前代码仍是静态前端基线，后续实现必须先承认这个边界：
 
 - `src/data.js` 仍保存目录、详情、Bench、GitHub Stars、作者、科研套装、Planner 模板和演示评分，但只有 `LocalResourceRepository` 可读取它。
-- `catalogIdentity.js` 已冻结 13 条资源和 13 个署名的独立 UUID/slug，并统一供应 13 学科与逐资源分类。其中 11 条属于旧原型迁移基线，2 条带人工采集的固定 commit 来源快照；它们都是本地候选，不是已发布数据库，也不代表运行验证。
+- `catalogIdentity.js` 已冻结 51 条资源和 21 个署名的独立 UUID/slug，并统一供应 13 学科与逐资源分类。其中 11 条属于旧原型迁移基线，40 条带人工采集的固定 commit 来源快照；它们都是本地候选，不是已发布数据库，也不代表运行验证。
 - `LegacyTaxonomyAdapter` 只处理 `biology / computer-science / physics` 旧学科 URL；`biology` 回到无筛选首页，不会机械重定向为 `life-sciences`。旧资源和作者 slug 保持 canonical。
 - 详情页和作者页只展示候选目录字段与明确证据状态；来源已定位候选还展示 revision-bound 的项目自述事实，运行验证仍明确为空。作者署名不是登录账号或资源维护权限的同义词。
 - `/planner` 与 `/bench` 只渲染 retired page；`AgentScenariosSimulator` 仍是未挂载原型组件。

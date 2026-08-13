@@ -146,37 +146,42 @@ const UnverifiedCandidateDetails = () => (
   </div>
 );
 
-const SourceProjectSidebar = ({ resource }) => (
-  <div className="sidebar-panel truthful-sidebar source-project-sidebar">
-    <p className="truth-section-kicker">Community rating</p>
-    <div className="rating-empty" aria-label="暂无社区评分，评分功能尚未开放">
-      <div className="rating-stars" aria-hidden="true">☆☆☆☆☆</div>
-      <strong>暂无社区评分</strong>
-      <span>评分功能尚未开放</span>
-    </div>
-    <p className="truth-section-kicker">License</p>
-    <div className="license-highlight">
-      <span>开源许可证</span>
-      <strong>{resource.sourceSnapshot.project.license.spdx}</strong>
-      <small>仓库声明</small>
-    </div>
-    <div className="source-project-meta">
-      <div>
-        <span>来源类型</span>
-        <strong>官方项目仓库</strong>
+const SourceProjectSidebar = ({ resource }) => {
+  const licenseSpdx = resource.sourceSnapshot.project.license.spdx;
+  const licenseUndeclared = licenseSpdx === 'NOASSERTION';
+
+  return (
+    <div className="sidebar-panel truthful-sidebar source-project-sidebar">
+      <p className="truth-section-kicker">Community rating</p>
+      <div className="rating-empty" aria-label="暂无社区评分，评分功能尚未开放">
+        <div className="rating-stars" aria-hidden="true">☆☆☆☆☆</div>
+        <strong>暂无社区评分</strong>
+        <span>评分功能尚未开放</span>
       </div>
-      <div>
-        <span>仓库更新时间</span>
-        <strong>{formatProjectDate(resource.sourceSnapshot.source.revisionCommittedAt)}</strong>
+      <p className="truth-section-kicker">License</p>
+      <div className="license-highlight">
+        <span>{licenseUndeclared ? '许可证' : '开源许可证'}</span>
+        <strong>{licenseUndeclared ? '来源未声明' : licenseSpdx}</strong>
+        <small>{licenseUndeclared ? '发布前需复核' : '仓库声明'}</small>
       </div>
-      <div>
-        <span>信息采集时间</span>
-        <strong>{formatProjectDate(resource.sourceSnapshot.source.fetchedAt)}</strong>
+      <div className="source-project-meta">
+        <div>
+          <span>来源类型</span>
+          <strong>官方项目仓库</strong>
+        </div>
+        <div>
+          <span>仓库更新时间</span>
+          <strong>{formatProjectDate(resource.sourceSnapshot.source.revisionCommittedAt)}</strong>
+        </div>
+        <div>
+          <span>信息采集时间</span>
+          <strong>{formatProjectDate(resource.sourceSnapshot.source.fetchedAt)}</strong>
+        </div>
       </div>
+      <Link to="/" className="btn btn-primary truthful-sidebar-action">返回目录</Link>
     </div>
-    <Link to="/" className="btn btn-primary truthful-sidebar-action">返回目录</Link>
-  </div>
-);
+  );
+};
 
 const UnverifiedSidebar = () => (
   <div className="sidebar-panel truthful-sidebar">

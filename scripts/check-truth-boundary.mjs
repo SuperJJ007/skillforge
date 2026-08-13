@@ -8,6 +8,10 @@ import {
   listResourceIdentities,
 } from '../src/domain/catalogIdentity.js';
 import {
+  sourceCandidateAuthors,
+  sourceCandidateResources,
+} from '../src/data/sourceCandidates.js';
+import {
   LEGACY_ROUTE_VERSION,
   RETIRED_ROUTE_CONTRACTS,
   legacyTaxonomyAdapter,
@@ -67,22 +71,26 @@ const forbiddenEvidenceValues = new Set(['verified', 'published', 'available']);
 const resources = catalogService.listResources();
 const resourceIdentities = listResourceIdentities();
 const authorIdentities = listAuthorIdentities();
+const legacyResourceCount = 11;
+const legacyAuthorCount = 11;
+const expectedResourceCount = legacyResourceCount + sourceCandidateResources.length;
+const expectedAuthorCount = legacyAuthorCount + sourceCandidateAuthors.length;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
 const reportDuplicates = (values, label) => {
   if (new Set(values).size !== values.length) violations.push(`${label} must be unique`);
 };
 
-if (resources.length !== 13) {
-  violations.push(`expected 11 migration candidates and 2 source candidates, received ${resources.length}`);
+if (resources.length !== expectedResourceCount) {
+  violations.push(`expected ${legacyResourceCount} migration candidates and ${sourceCandidateResources.length} source candidates, received ${resources.length}`);
 }
 
 if (CATALOG_IDENTITY_VERSION !== 1 || LEGACY_ROUTE_VERSION !== 1) {
   violations.push('catalog identity and legacy route baselines must start at version 1');
 }
 
-if (resourceIdentities.length !== 13 || authorIdentities.length !== 13) {
-  violations.push('expected 13 frozen resource identities and 13 frozen author identities');
+if (resourceIdentities.length !== expectedResourceCount || authorIdentities.length !== expectedAuthorCount) {
+  violations.push(`expected ${expectedResourceCount} frozen resource identities and ${expectedAuthorCount} frozen author identities`);
 }
 
 if (CANONICAL_FIELDS.length !== 13) {
@@ -185,8 +193,8 @@ for (const resource of resources) {
 }
 
 const sourceLocatedResources = resources.filter((resource) => resource.sourceReviewState === 'source-located');
-if (sourceLocatedResources.length !== 2) {
-  violations.push(`expected 2 source-located candidates, received ${sourceLocatedResources.length}`);
+if (sourceLocatedResources.length !== sourceCandidateResources.length) {
+  violations.push(`expected ${sourceCandidateResources.length} source-located candidates, received ${sourceLocatedResources.length}`);
 }
 
 const sourceSnapshotSchema = JSON.parse(
@@ -195,6 +203,8 @@ const sourceSnapshotSchema = JSON.parse(
 if (
   sourceSnapshotSchema.properties?.schemaVersion?.const !== 1
   || sourceSnapshotSchema.properties?.sourceType?.const !== 'official-repository'
+  || !sourceSnapshotSchema.$defs?.source?.required?.includes('rootPath')
+  || !sourceSnapshotSchema.$defs?.source?.required?.includes('manifestPath')
   || sourceSnapshotSchema.additionalProperties !== false
 ) {
   violations.push('catalog source snapshot v1 schema must remain closed and versioned');

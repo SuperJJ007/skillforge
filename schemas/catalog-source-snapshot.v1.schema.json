@@ -33,7 +33,9 @@
         "revisionUrl",
         "revisionCommittedAt",
         "fetchedAt",
-        "parserVersion"
+        "parserVersion",
+        "rootPath",
+        "manifestPath"
       ],
       "properties": {
         "provider": { "const": "github" },
@@ -54,7 +56,9 @@
         "parserVersion": {
           "type": "string",
           "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$"
-        }
+        },
+        "rootPath": { "type": "string" },
+        "manifestPath": { "type": "string" }
       }
     },
     "evidenceItem": {
