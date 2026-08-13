@@ -23,10 +23,15 @@
 }
 
 .truthful-detail-layout {
+  display: block;
+}
+
+.detail-overview-grid {
   display: grid;
   align-items: start;
-  grid-template-columns: minmax(0, 1fr) 340px;
-  gap: 3rem;
+  grid-template-columns: minmax(0, 1fr) 270px;
+  gap: 2.5rem;
+  margin-bottom: 2.5rem;
 }
 
 .tags-row {
@@ -58,7 +63,7 @@
   display: flex;
   align-items: flex-start;
   gap: 1.4rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 0;
 }
 
 .detail-icon {
@@ -155,7 +160,7 @@
 }
 
 .truth-section-kicker {
-  margin-bottom: 0.65rem;
+  margin-bottom: 0.45rem;
   color: #9ca3af;
   font-size: 0.72rem;
   font-weight: 800;
@@ -251,13 +256,11 @@
 }
 
 .truthful-sidebar {
-  position: sticky;
-  top: 7rem;
-  padding: 1.75rem;
+  padding: 1.2rem;
   border: 1px solid rgba(17, 24, 39, 0.08);
-  border-radius: 20px;
+  border-radius: 16px;
   background: #ffffff;
-  box-shadow: 0 8px 30px rgba(17, 24, 39, 0.04);
+  box-shadow: 0 6px 22px rgba(17, 24, 39, 0.035);
 }
 
 .evidence-status-list {
@@ -295,22 +298,22 @@
 
 .rating-empty {
   display: grid;
-  gap: 0.3rem;
-  margin: 0.9rem 0 1.6rem;
-  padding-bottom: 1.4rem;
+  gap: 0.18rem;
+  margin: 0.4rem 0 0.75rem;
+  padding-bottom: 0.7rem;
   border-bottom: 1px solid rgba(17, 24, 39, 0.07);
 }
 
 .rating-stars {
   color: #d3a42f;
-  font-size: 1.75rem;
+  font-size: 1.2rem;
   letter-spacing: 0.06em;
   line-height: 1;
 }
 
 .rating-empty strong {
   color: #111827;
-  font-size: 0.95rem;
+  font-size: 0.86rem;
 }
 
 .rating-empty span {
@@ -320,9 +323,9 @@
 
 .license-highlight {
   display: grid;
-  gap: 0.35rem;
-  margin: 0.9rem 0 1.5rem;
-  padding: 1.25rem;
+  gap: 0.2rem;
+  margin: 0.4rem 0 0.75rem;
+  padding: 0.75rem;
   border: 1px solid rgba(49, 89, 121, 0.18);
   border-radius: 15px;
   background: linear-gradient(145deg, #f4f8fb, #ffffff);
@@ -336,19 +339,21 @@
 
 .license-highlight strong {
   color: #172a3a;
-  font-size: 1.35rem;
+  font-size: 1rem;
   letter-spacing: -0.02em;
 }
 
 .source-project-meta {
-  margin: 0 0 1.5rem;
+  margin: 0;
   border-top: 1px solid rgba(17, 24, 39, 0.07);
 }
 
 .source-project-meta > div {
-  display: grid;
-  gap: 0.3rem;
-  padding: 0.85rem 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.52rem 0;
   border-bottom: 1px solid rgba(17, 24, 39, 0.07);
 }
 
@@ -359,7 +364,8 @@
 
 .source-project-meta strong {
   color: #111827;
-  font-size: 0.9rem;
+  font-size: 0.78rem;
+  text-align: right;
 }
 
 .truthful-sidebar-action {
@@ -378,12 +384,9 @@
 }
 
 @media (max-width: 900px) {
-  .truthful-detail-layout {
+  .detail-overview-grid {
     grid-template-columns: 1fr;
-  }
-
-  .truthful-sidebar {
-    position: static;
+    gap: 1.5rem;
   }
 
   .source-detail-columns {

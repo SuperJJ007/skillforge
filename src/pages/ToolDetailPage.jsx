@@ -178,7 +178,6 @@ const SourceProjectSidebar = ({ resource }) => {
           <strong>{formatProjectDate(resource.sourceSnapshot.source.fetchedAt)}</strong>
         </div>
       </div>
-      <Link to="/" className="btn btn-primary truthful-sidebar-action">返回目录</Link>
     </div>
   );
 };
@@ -232,68 +231,72 @@ const ToolDetailPage = () => {
 
       <div className="detail-layout truthful-detail-layout">
         <main className="main-content">
-          <div className="tags-row">
-            <span
-              className="type-badge"
-              style={{ backgroundColor: getIconBg(resource.type), color: '#111827', fontWeight: '600' }}
-            >
-              {resource.type}
-            </span>
-            {resource.tags.map((tag) => <span key={tag} className="tag-pill">#{tag}</span>)}
-          </div>
-
-          <div className="detail-header-row">
-            {sourceLocated ? (
-              <RepositoryAvatar
-                key={resource.slug}
-                avatarUrl={resource.sourceSnapshot.project.ownerAvatarUrl}
-                fallback={resource.title.slice(0, 1).toUpperCase()}
-                type={resource.type}
-              />
-            ) : (
-              <div className="detail-icon" style={{ backgroundColor: getIconBg(resource.type) }} aria-hidden="true">
-                {resource.icon}
-              </div>
-            )}
-            <div className="detail-header-content">
-              <h1 className="detail-title">{resource.title}</h1>
-              <p className="detail-desc">{resource.description}</p>
-              <p className="detail-author">
-                目录署名：{' '}
-                {resource.authorSlug ? (
-                  <Link to={`/author/${resource.authorSlug}`}>{resource.author} ↗</Link>
-                ) : resource.author}
-              </p>
-              {sourceLocated && (
-                <a
-                  href={resource.sourceUrl}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="btn btn-primary project-address-link"
+          <div className="detail-overview-grid">
+            <div className="detail-overview-main">
+              <div className="tags-row">
+                <span
+                  className="type-badge"
+                  style={{ backgroundColor: getIconBg(resource.type), color: '#111827', fontWeight: '600' }}
                 >
-                  查看项目地址 ↗
-                </a>
+                  {resource.type}
+                </span>
+                {resource.tags.map((tag) => <span key={tag} className="tag-pill">#{tag}</span>)}
+              </div>
+
+              <div className="detail-header-row">
+                {sourceLocated ? (
+                  <RepositoryAvatar
+                    key={resource.slug}
+                    avatarUrl={resource.sourceSnapshot.project.ownerAvatarUrl}
+                    fallback={resource.title.slice(0, 1).toUpperCase()}
+                    type={resource.type}
+                  />
+                ) : (
+                  <div className="detail-icon" style={{ backgroundColor: getIconBg(resource.type) }} aria-hidden="true">
+                    {resource.icon}
+                  </div>
+                )}
+                <div className="detail-header-content">
+                  <h1 className="detail-title">{resource.title}</h1>
+                  <p className="detail-desc">{resource.description}</p>
+                  <p className="detail-author">
+                    目录署名：{' '}
+                    {resource.authorSlug ? (
+                      <Link to={`/author/${resource.authorSlug}`}>{resource.author} ↗</Link>
+                    ) : resource.author}
+                  </p>
+                  {sourceLocated && (
+                    <a
+                      href={resource.sourceUrl}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="btn btn-primary project-address-link"
+                    >
+                      查看项目地址 ↗
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {!sourceLocated && (
+                <div className="candidate-notice" role="note">
+                  <strong>这是迁移候选，不是已发布推荐。</strong>
+                  <span>当前只保留原型中的目录描述，尚未经过来源、仓库身份与人工发布流程核验。</span>
+                </div>
               )}
             </div>
-          </div>
 
-          {!sourceLocated && (
-            <div className="candidate-notice" role="note">
-              <strong>这是迁移候选，不是已发布推荐。</strong>
-              <span>当前只保留原型中的目录描述，尚未经过来源、仓库身份与人工发布流程核验。</span>
-            </div>
-          )}
+            <aside className="sidebar detail-overview-sidebar" aria-label={sourceLocated ? '项目信息' : '证据状态'}>
+              {sourceLocated
+                ? <SourceProjectSidebar resource={resource} />
+                : <UnverifiedSidebar />}
+            </aside>
+          </div>
 
           {sourceLocated
             ? <SourceLocatedDetails snapshot={resource.sourceSnapshot} />
             : <UnverifiedCandidateDetails />}
         </main>
-
-        <aside className="sidebar" aria-label={sourceLocated ? '项目信息' : '证据状态'}>
-          {sourceLocated
-            ? <SourceProjectSidebar resource={resource} />
-            : <UnverifiedSidebar />}
-        </aside>
       </div>
     </div>
   );
