@@ -18,10 +18,7 @@ const ResourceSection = ({ id, title, items, activeFilterLabel, query }) => (
   <section id={id} className={`resource-section resource-section-${id}`} aria-labelledby={`${id}-title`}>
     <div className="container">
       <div className="resource-section-header">
-        <div className="resource-section-title-group">
-          <h2 id={`${id}-title`} className="resource-section-title">{title}</h2>
-          <span className="resource-count">{items.length} 个资源</span>
-        </div>
+        <h2 id={`${id}-title`} className="resource-section-title">{title}</h2>
       </div>
 
       {items.length > 0 ? (
@@ -173,7 +170,6 @@ const HomePage = () => {
           <SearchBar
             value={query}
             onChange={handleQueryChange}
-            resultCount={filteredResources.length}
             totalCount={filterTotal}
             scopeLabel={activeFilter === 'all' ? '' : activeFilterLabel}
           />
@@ -189,20 +185,14 @@ const HomePage = () => {
       <section className="field-filter-section" aria-labelledby="field-filter-title">
         <div className="container">
           <div className="field-filter-heading">
-            <div>
-              <p className="field-filter-kicker">按适用范围或学科浏览</p>
-              <h2 id="field-filter-title">资源范围与学科</h2>
-            </div>
-            <p className="field-filter-summary">
-              {activeFilterLabel} · {filteredResources.length} 个资源
-            </p>
+            <h2 id="field-filter-title">资源分类</h2>
           </div>
 
           <div
             ref={filterRailRef}
             className="field-filters"
             role="group"
-            aria-label="全局资源范围与学科筛选"
+            aria-label="全局资源分类筛选"
           >
             {FILTER_GROUPS.map((group) => (
               <div
@@ -212,20 +202,19 @@ const HomePage = () => {
                 aria-label={group.label}
               >
                 {group.options.map((option) => {
-                  const count = catalogService.filterResources(queryMatches, option.id).length;
-                  const isGeneral = option.id === 'general';
-
+                  const hasMatches = catalogService.filterResources(queryMatches, option.id).length > 0;
                   return (
                     <button
                       key={option.id}
                       type="button"
-                      className={`field-filter ${activeFilter === option.id ? 'active' : ''} ${count === 0 ? 'is-empty' : ''} ${isGeneral ? 'is-scope' : ''}`}
-                      aria-label={`${option.label}，${count > 0 ? `${count} 个资源` : (isGeneral ? '跨学科文献检索、科研写作、引用管理等资源正在收录' : '资源正在收录')}`}
+                      className={`field-filter ${activeFilter === option.id ? 'active' : ''} ${hasMatches ? '' : 'is-empty'}`}
+                      aria-label={hasMatches
+                        ? option.label
+                        : `${option.label}，资源正在收录`}
                       aria-pressed={activeFilter === option.id}
                       onClick={() => handleFilterChange(option.id)}
                     >
                       <span>{option.label}</span>
-                      {count > 0 && <span className="field-filter-count" aria-hidden="true">{count}</span>}
                     </button>
                   );
                 })}
@@ -256,7 +245,7 @@ const HomePage = () => {
               <p>
                 {activeFilter === 'general' && !query.trim()
                   ? '收录不依赖特定学科对象、可跨学科复用的资源，如通用文献检索与获取、科研写作、引用管理，以及通用数据整理与绘图。学科专用工具仍归相应学科。'
-                  : '可以切换适用范围、学科或关键词，浏览其他科研资源。'}
+                  : '可以切换资源分类或关键词，浏览其他科研资源。'}
               </p>
               <button type="button" className="clear-filters-button" onClick={clearAllFilters}>
                 清除筛选

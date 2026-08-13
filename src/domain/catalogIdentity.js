@@ -116,6 +116,24 @@ const RESOURCE_IDENTITIES = [
     primaryFieldId: 'physics-astronomy',
     fieldIds: ['physics-astronomy', 'computer-science'],
   },
+  {
+    id: '823f3d34-a567-404f-b4f5-e59bea04dc9b',
+    slug: 'biomcp',
+    legacyDisciplineId: null,
+    authorSlug: 'genomoncology',
+    scope: 'discipline',
+    primaryFieldId: 'medicine-health',
+    fieldIds: ['medicine-health', 'life-sciences'],
+  },
+  {
+    id: '35b6ba8c-aba2-4082-b15d-7b47e7cf8157',
+    slug: 'arxiv-mcp-server',
+    legacyDisciplineId: null,
+    authorSlug: 'blazickjp',
+    scope: 'general',
+    primaryFieldId: null,
+    fieldIds: [],
+  },
 ];
 
 const AUTHOR_IDENTITIES = [
@@ -130,6 +148,8 @@ const AUTHOR_IDENTITIES = [
   { id: '7b669534-24be-4fc8-ba70-440d94c34fb5', slug: 'meta-ai' },
   { id: '47c65b6e-1774-4716-b861-a03eedb04400', slug: 'huggingface' },
   { id: '41dab36b-bbd6-4097-827e-66b016cb637f', slug: 'ibm-quantum' },
+  { id: 'bb4b6fdb-6915-4ba5-b6b9-8d919a30edd0', slug: 'genomoncology' },
+  { id: '14ce22a5-6cab-45d7-8a59-761ae835c24a', slug: 'blazickjp' },
 ];
 
 const cloneResourceIdentity = (identity) => identity && ({

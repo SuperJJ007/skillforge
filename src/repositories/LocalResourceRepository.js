@@ -1,12 +1,17 @@
 import { authorsData, disciplinesData } from '../data.js';
+import { sourceCandidateAuthors, sourceCandidateResources } from '../data/sourceCandidates.js';
 import { CATALOG_MODE, getResourceClassification } from '../domain/catalog.js';
 import { getAuthorIdentity, getResourceIdentity } from '../domain/catalogIdentity.js';
+import { cloneSourceSnapshot, validateSourceSnapshot } from '../domain/sourceSnapshot.js';
 
 const cloneResource = (resource) => ({
   ...resource,
   tags: [...resource.tags],
   fieldIds: [...resource.fieldIds],
   evidence: { ...resource.evidence },
+  ...(resource.sourceSnapshot
+    ? { sourceSnapshot: cloneSourceSnapshot(resource.sourceSnapshot) }
+    : {}),
 });
 
 const toCatalogCandidate = (resource, legacyDisciplineId) => {
@@ -48,11 +53,61 @@ const toCatalogCandidate = (resource, legacyDisciplineId) => {
   };
 };
 
-const catalogCandidates = disciplinesData.flatMap((discipline) => (
+const legacyCatalogCandidates = disciplinesData.flatMap((discipline) => (
   discipline.subcategories.flatMap((subcategory) => (
     subcategory.items.map((resource) => toCatalogCandidate(resource, discipline.id))
   ))
 ));
+
+const toSourceCandidate = (resource) => {
+  const identity = getResourceIdentity(resource.slug);
+  if (!identity || identity.legacyDisciplineId !== null) {
+    throw new Error(`Missing source candidate identity: ${resource.slug}`);
+  }
+  if (identity.authorSlug !== resource.authorSlug) {
+    throw new Error(`Source candidate author mismatch: ${resource.slug}`);
+  }
+
+  const authorIdentity = getAuthorIdentity(identity.authorSlug);
+  if (!authorIdentity) throw new Error(`Missing source candidate author: ${identity.authorSlug}`);
+  validateSourceSnapshot(resource.sourceSnapshot, resource.slug);
+  if (resource.sourceSnapshot.source.canonicalUrl !== resource.sourceUrl) {
+    throw new Error(`Source candidate URL mismatch: ${resource.slug}`);
+  }
+
+  return {
+    id: identity.id,
+    slug: identity.slug,
+    title: resource.title,
+    description: resource.description,
+    type: resource.type,
+    icon: resource.icon,
+    author: resource.author,
+    authorId: authorIdentity.id,
+    authorSlug: authorIdentity.slug,
+    tags: [...resource.tags],
+    ...getResourceClassification(identity.slug),
+    sourceUrl: resource.sourceUrl,
+    sourceReviewState: 'source-located',
+    sourceSnapshot: cloneSourceSnapshot(resource.sourceSnapshot),
+    catalogMode: CATALOG_MODE,
+    publicationState: 'candidate',
+    evidence: {
+      catalogSource: 'official-repository',
+      github: 'unavailable',
+      installation: 'source-documented',
+      compatibility: 'unavailable',
+      communityRating: 'unavailable',
+      benchmark: 'unavailable',
+      academicUsage: 'unavailable',
+    },
+  };
+};
+
+const catalogCandidates = [
+  ...legacyCatalogCandidates,
+  ...sourceCandidateResources.map(toSourceCandidate),
+];
 
 const candidateIds = new Set(catalogCandidates.map((resource) => resource.id));
 const candidateSlugs = new Set(catalogCandidates.map((resource) => resource.slug));
@@ -61,10 +116,13 @@ if (candidateIds.size !== catalogCandidates.length || candidateSlugs.size !== ca
 }
 
 const candidatesBySlug = new Map(catalogCandidates.map((resource) => [resource.slug, resource]));
-const legacyAuthorsBySlug = new Map(authorsData.map((author) => [author.id, author]));
+const candidateAuthorsBySlug = new Map([
+  ...authorsData.map((author) => [author.id, author]),
+  ...sourceCandidateAuthors.map((author) => [author.slug, author]),
+]);
 
 const toCatalogAuthor = (authorSlug) => {
-  const author = legacyAuthorsBySlug.get(authorSlug);
+  const author = candidateAuthorsBySlug.get(authorSlug);
   const identity = getAuthorIdentity(authorSlug);
   if (!author || !identity) return null;
 

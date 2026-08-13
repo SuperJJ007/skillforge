@@ -30,7 +30,7 @@ const AvailabilityPage = ({
 
         <div className="availability-actions">
           <Link to="/" className="btn btn-primary">返回资源目录</Link>
-          <Link to="/?scope=general" className="btn btn-outline">浏览通用科研</Link>
+          <Link to="/?scope=general" className="btn btn-outline">浏览通用</Link>
         </div>
       </div>
     </section>

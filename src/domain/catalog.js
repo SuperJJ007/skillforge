@@ -4,17 +4,13 @@ export const CATALOG_MODE = 'prototype-candidates';
 
 export const FILTER_GROUPS = [
   {
-    id: 'scope',
-    label: '适用范围',
+    id: 'catalog',
+    label: '资源分类',
     options: [
       { id: 'all', label: '全部', kind: 'all' },
-      { id: 'general', label: '通用科研', kind: 'scope' },
+      { id: 'general', label: '通用', kind: 'scope' },
+      ...CANONICAL_FIELDS.map((field) => ({ ...field, kind: 'field' })),
     ],
-  },
-  {
-    id: 'disciplines',
-    label: '学科领域',
-    options: CANONICAL_FIELDS.map((field) => ({ ...field, kind: 'field' })),
   },
 ];
 

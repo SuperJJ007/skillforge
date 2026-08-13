@@ -56,6 +56,9 @@ const allowedResourceFields = new Set([
   'scope',
   'primaryFieldId',
   'fieldIds',
+  'sourceUrl',
+  'sourceReviewState',
+  'sourceSnapshot',
   'catalogMode',
   'publicationState',
   'evidence',
@@ -70,16 +73,16 @@ const reportDuplicates = (values, label) => {
   if (new Set(values).size !== values.length) violations.push(`${label} must be unique`);
 };
 
-if (resources.length !== 11) {
-  violations.push(`expected 11 migration candidates, received ${resources.length}`);
+if (resources.length !== 13) {
+  violations.push(`expected 11 migration candidates and 2 source candidates, received ${resources.length}`);
 }
 
 if (CATALOG_IDENTITY_VERSION !== 1 || LEGACY_ROUTE_VERSION !== 1) {
   violations.push('catalog identity and legacy route baselines must start at version 1');
 }
 
-if (resourceIdentities.length !== 11 || authorIdentities.length !== 11) {
-  violations.push('expected 11 frozen resource identities and 11 frozen author identities');
+if (resourceIdentities.length !== 13 || authorIdentities.length !== 13) {
+  violations.push('expected 13 frozen resource identities and 13 frozen author identities');
 }
 
 if (CANONICAL_FIELDS.length !== 13) {
@@ -140,6 +143,30 @@ for (const resource of resources) {
     violations.push(`${resource.slug} is not reachable through its preserved resource URL`);
   }
 
+  if (resource.sourceReviewState === 'source-located') {
+    if (!/^https:\/\/github\.com\/[^/]+\/[^/]+$/.test(resource.sourceUrl)) {
+      violations.push(`${resource.slug} must link to a canonical GitHub repository`);
+    }
+    if (resource.evidence.catalogSource !== 'official-repository') {
+      violations.push(`${resource.slug} must identify its manually located catalog source`);
+    }
+    const snapshot = resource.sourceSnapshot;
+    if (
+      !snapshot
+      || snapshot.schemaVersion !== 1
+      || snapshot.resourceSlug !== resource.slug
+      || snapshot.source.canonicalUrl !== resource.sourceUrl
+      || snapshot.source.revisionUrl !== `${resource.sourceUrl}/commit/${snapshot.source.revision}`
+    ) {
+      violations.push(`${resource.slug} must expose a revision-bound source snapshot`);
+    }
+    if (resource.evidence.installation !== 'source-documented') {
+      violations.push(`${resource.slug} must distinguish source-documented installation from runtime verification`);
+    }
+  } else if (resource.sourceUrl || resource.sourceReviewState || resource.sourceSnapshot) {
+    violations.push(`${resource.slug} exposes a source without a source-located review state`);
+  }
+
   for (const field of Object.keys(resource)) {
     if (!allowedResourceFields.has(field)) {
       violations.push(`${resource.id} exposes unsupported field ${field}`);
@@ -157,10 +184,28 @@ for (const resource of resources) {
   }
 }
 
+const sourceLocatedResources = resources.filter((resource) => resource.sourceReviewState === 'source-located');
+if (sourceLocatedResources.length !== 2) {
+  violations.push(`expected 2 source-located candidates, received ${sourceLocatedResources.length}`);
+}
+
+const sourceSnapshotSchema = JSON.parse(
+  await readFile(path.join(projectRoot, 'schemas', 'catalog-source-snapshot.v1.schema.json'), 'utf8'),
+);
+if (
+  sourceSnapshotSchema.properties?.schemaVersion?.const !== 1
+  || sourceSnapshotSchema.properties?.sourceType?.const !== 'official-repository'
+  || sourceSnapshotSchema.additionalProperties !== false
+) {
+  violations.push('catalog source snapshot v1 schema must remain closed and versioned');
+}
+
 const legacyRoutes = legacyTaxonomyAdapter.listDisciplineRoutes();
 const preservedResourcePaths = legacyTaxonomyAdapter.listPreservedResourcePaths();
 const preservedAuthorPaths = legacyTaxonomyAdapter.listPreservedAuthorPaths();
-const legacyDisciplineIds = new Set(resourceIdentities.map((identity) => identity.legacyDisciplineId));
+const legacyDisciplineIds = new Set(
+  resourceIdentities.map((identity) => identity.legacyDisciplineId).filter(Boolean),
+);
 reportDuplicates(legacyRoutes.map((route) => route.legacyDisciplineId), 'legacy discipline routes');
 reportDuplicates(preservedResourcePaths.map((route) => route.legacyPath), 'preserved resource paths');
 reportDuplicates(preservedAuthorPaths.map((route) => route.legacyPath), 'preserved author paths');

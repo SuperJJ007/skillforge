@@ -1,7 +1,7 @@
 import React from 'react';
 import './SearchBar.css';
 
-const SearchBar = ({ value, onChange, resultCount, totalCount, scopeLabel = '' }) => {
+const SearchBar = ({ value, onChange, totalCount, scopeLabel = '' }) => {
   const isSearching = value.trim() !== '';
 
   return (
@@ -34,7 +34,7 @@ const SearchBar = ({ value, onChange, resultCount, totalCount, scopeLabel = '' }
       </div>
       <p id="search-status" className="search-status" aria-live="polite">
         {isSearching
-          ? `找到 ${resultCount} 个匹配资源`
+          ? '正在显示匹配资源'
           : `${scopeLabel || '全部资源'}共收录 ${totalCount} 个科研资源`}
       </p>
     </form>

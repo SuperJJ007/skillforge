@@ -25,11 +25,20 @@
 .card-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  gap: 0.75rem;
   margin-bottom: 1rem;
 }
 
+.card-header-identity {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 0.65rem;
+}
+
 .card-icon {
+  flex: 0 0 auto;
   width: 40px;
   height: 40px;
   border-radius: 8px;
@@ -37,6 +46,17 @@
   align-items: center;
   justify-content: center;
   font-size: 1.25rem;
+}
+
+.card-repository-avatar {
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  background: #ffffff;
+  object-fit: cover;
+}
+
+.card-avatar-fallback {
+  color: #334155;
+  font-weight: 750;
 }
 
 .card-verification {
@@ -50,6 +70,12 @@
   font-weight: 700;
   line-height: 1.2;
   white-space: nowrap;
+}
+
+.card-verification.is-source-located {
+  border-color: #b8cde0;
+  background: #edf5fb;
+  color: #36536d;
 }
 
 .card-title {
@@ -143,7 +169,6 @@
 }
 
 .card-compact .card-header {
-  justify-content: flex-start;
   margin-bottom: 1.2rem;
 }
 
@@ -181,6 +206,22 @@
   line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.card-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0 0 1rem;
+  color: #8a9099;
+  font-size: 0.76rem;
+}
+
+.card-rating-stars {
+  color: #c99b27;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  line-height: 1;
 }
 
 .card-compact .author {

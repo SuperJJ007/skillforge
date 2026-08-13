@@ -44,9 +44,9 @@ flowchart LR
 当前代码仍是静态前端基线，后续实现必须先承认这个边界：
 
 - `src/data.js` 仍保存目录、详情、Bench、GitHub Stars、作者、科研套装、Planner 模板和演示评分，但只有 `LocalResourceRepository` 可读取它。
-- `catalogIdentity.js` 已冻结 11 条资源和 11 个署名的独立 UUID/slug，并统一供应 13 学科与逐资源分类；这是本地迁移基线，不是已发布数据库。
+- `catalogIdentity.js` 已冻结 13 条资源和 13 个署名的独立 UUID/slug，并统一供应 13 学科与逐资源分类。其中 11 条属于旧原型迁移基线，2 条带人工采集的固定 commit 来源快照；它们都是本地候选，不是已发布数据库，也不代表运行验证。
 - `LegacyTaxonomyAdapter` 只处理 `biology / computer-science / physics` 旧学科 URL；`biology` 回到无筛选首页，不会机械重定向为 `life-sciences`。旧资源和作者 slug 保持 canonical。
-- 详情页和作者页只展示候选目录字段与明确未验证状态；作者署名不是登录账号或资源维护权限的同义词。
+- 详情页和作者页只展示候选目录字段与明确证据状态；来源已定位候选还展示 revision-bound 的项目自述事实，运行验证仍明确为空。作者署名不是登录账号或资源维护权限的同义词。
 - `/planner` 与 `/bench` 只渲染 retired page；`AgentScenariosSimulator` 仍是未挂载原型组件。
 - `LoginPage.jsx`、`SubmitPage.jsx` 和 `AdminReviewPage.jsx` 明确显示未开放，没有认证、API 或持久化；当前 Netlify 配置只负责 Vite 静态构建与 SPA 重定向。
 
@@ -82,7 +82,7 @@ Home、Detail、Submit、Author 与 API 切到 canonical taxonomy 后，生产�
 
 ## 5. 统一分类模型
 
-“通用科研”是适用范围，不是学科。首页、详情、提交、API 和数据库必须共同使用一份分类来源。
+“通用”在数据模型中是适用范围，不是学科；在首页筛选中与 13 个学科同层展示，并排在各学科之前。首页、详情、提交、API 和数据库必须共同使用一份分类来源。
 
 ### 5.1 适用范围
 

@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Card.css';
-import CategoryBadge from './CategoryBadge';
 
 const getIconBg = (type) => {
   switch (type.toLowerCase()) {
@@ -14,6 +13,27 @@ const getIconBg = (type) => {
     default:
       return 'rgba(156, 163, 175, 0.1)';
   }
+};
+
+const CardAvatar = ({ avatarUrl, fallback, type, author }) => {
+  const [imageFailed, setImageFailed] = useState(false);
+
+  if (!avatarUrl || imageFailed) {
+    return (
+      <span className="card-icon card-avatar-fallback" style={{ backgroundColor: getIconBg(type) }} aria-hidden="true">
+        {fallback}
+      </span>
+    );
+  }
+
+  return (
+    <img
+      className="card-icon card-repository-avatar"
+      src={avatarUrl}
+      alt={`${author} 头像`}
+      onError={() => setImageFailed(true)}
+    />
+  );
 };
 
 const Card = ({
@@ -30,27 +50,36 @@ const Card = ({
   fieldIds = [],
   scope = 'discipline',
   publicationState = 'candidate',
-}) => (
-  <Link
-    to={`/tool/${slug}`}
-    data-resource-id={id}
-    className={`card-container ${compact ? 'card-compact' : ''}`}
-    data-resource-card={compact ? 'true' : undefined}
-    data-primary-field={compact ? primaryFieldId : undefined}
-    data-fields={compact ? fieldIds.join(' ') : undefined}
-    data-scope={compact ? scope : undefined}
-  >
-    <div className="card-header">
-      {!compact && (
-        <div className="card-icon" style={{ backgroundColor: getIconBg(type) }}>
-          {icon}
+  sourceReviewState = 'unreviewed',
+  sourceSnapshot,
+}) => {
+  const ownerAvatarUrl = sourceSnapshot?.project?.ownerAvatarUrl;
+
+  return (
+    <Link
+      to={`/tool/${slug}`}
+      data-resource-id={id}
+      className={`card-container ${compact ? 'card-compact' : ''}`}
+      data-resource-card={compact ? 'true' : undefined}
+      data-primary-field={compact ? primaryFieldId : undefined}
+      data-fields={compact ? fieldIds.join(' ') : undefined}
+      data-scope={compact ? scope : undefined}
+    >
+      <div className="card-header">
+        <div className="card-header-identity">
+          <CardAvatar
+            avatarUrl={ownerAvatarUrl}
+            fallback={ownerAvatarUrl ? title.slice(0, 1).toUpperCase() : icon}
+            type={type}
+            author={author}
+          />
         </div>
-      )}
-      <CategoryBadge type={type} />
-      {publicationState === 'candidate' && (
-        <span className="card-verification">待来源核验</span>
-      )}
-    </div>
+        {publicationState === 'candidate' && (
+          <span className={`card-verification ${sourceReviewState === 'source-located' ? 'is-source-located' : ''}`}>
+            {sourceReviewState === 'source-located' ? '来源已定位' : '待来源核验'}
+          </span>
+        )}
+      </div>
 
     <h3 className="card-title">{title}</h3>
     <p className="card-description">{description}</p>
@@ -63,11 +92,17 @@ const Card = ({
       </div>
     )}
 
+    <div className="card-rating" aria-label="暂无社区评分">
+      <span className="card-rating-stars" aria-hidden="true">☆☆☆☆☆</span>
+      <span>暂无评分</span>
+    </div>
+
     <div className="card-footer">
       <div className="author">{author}</div>
-      <span className="card-detail-cta">查看候选信息 →</span>
+      <span className="card-detail-cta">查看更多信息 →</span>
     </div>
-  </Link>
-);
+    </Link>
+  );
+};
 
 export default Card;
