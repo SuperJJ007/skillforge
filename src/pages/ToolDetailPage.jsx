@@ -26,8 +26,8 @@ const EVIDENCE_ROWS = [
 ];
 
 const ToolDetailPage = () => {
-  const { id } = useParams();
-  const resource = catalogService.getResource(id);
+  const { slug } = useParams();
+  const resource = catalogService.getResource(slug);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -70,8 +70,8 @@ const ToolDetailPage = () => {
               <h1 className="detail-title">{resource.title}</h1>
               <p className="detail-author">
                 目录署名：{' '}
-                {resource.authorId ? (
-                  <Link to={`/author/${resource.authorId}`}>{resource.author} ↗</Link>
+                {resource.authorSlug ? (
+                  <Link to={`/author/${resource.authorSlug}`}>{resource.author} ↗</Link>
                 ) : resource.author}
               </p>
             </div>

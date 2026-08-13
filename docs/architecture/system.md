@@ -41,15 +41,14 @@ flowchart LR
 
 ## 3. 当前代码基线与本轮范围
 
-当前代码仍是静态前端原型，后续实现必须先承认这个边界：
+当前代码仍是静态前端基线，后续实现必须先承认这个边界：
 
-- `src/data.js` 同时保存目录、详情、Bench、GitHub Stars、作者、科研套装、Planner 模板和演示评分。
-- 首页 `HomePage.jsx` 定义 13 个新学科和 11 个资源的逐项分类；`SubmitPage.jsx` 与 `data.js` 仍分别使用 `biology / computer-science / physics` 旧分类。它们构成三处独立定义、两套 ID 词汇，而不只是两张映射表。
-- 旧 `disciplinesData` 还被 `/discipline/:id`、Bench、Planner、科研套装和提交成功跳转消费。旧 `biology` 同时容纳今天会归到生命科学、医学与健康、化学的资源，不能机械重定向为 `life-sciences`。
-- `ToolDetailPage.jsx` 会给缺失字段补安装量、GitHub Stars、版本和仓库等演示默认值，并无条件展示安全审计文案；`CompatMatrix`、`EvidencePanel`、`AcademicCredit` 也已挂载在详情页，但其静态内容不能当作生产证据。
-- `/author/:id` 源码路由已挂载，当前作者数据包含实验室和机构；目标模型另外支持个人和社区。作者不是登录账号或资源维护权限的同义词。
-- `/planner` 与 `/bench` 源码路由已挂载、可由直接 URL 访问，但当前主导航没有入口；`AgentScenariosSimulator` 只是在仓库中存在但未挂载的原型组件。
-- `LoginPage.jsx` 和 `SubmitPage.jsx` 只在浏览器内延时跳转，没有认证、API 或持久化；当前 Netlify 配置只负责 Vite 静态构建与 SPA 重定向。
+- `src/data.js` 仍保存目录、详情、Bench、GitHub Stars、作者、科研套装、Planner 模板和演示评分，但只有 `LocalResourceRepository` 可读取它。
+- `catalogIdentity.js` 已冻结 11 条资源和 11 个署名的独立 UUID/slug，并统一供应 13 学科与逐资源分类；这是本地迁移基线，不是已发布数据库。
+- `LegacyTaxonomyAdapter` 只处理 `biology / computer-science / physics` 旧学科 URL；`biology` 回到无筛选首页，不会机械重定向为 `life-sciences`。旧资源和作者 slug 保持 canonical。
+- 详情页和作者页只展示候选目录字段与明确未验证状态；作者署名不是登录账号或资源维护权限的同义词。
+- `/planner` 与 `/bench` 只渲染 retired page；`AgentScenariosSimulator` 仍是未挂载原型组件。
+- `LoginPage.jsx`、`SubmitPage.jsx` 和 `AdminReviewPage.jsx` 明确显示未开放，没有认证、API 或持久化；当前 Netlify 配置只负责 Vite 静态构建与 SPA 重定向。
 
 因此，当前页面上的静态 `rating`、`skillbench`、`githubStars`、安装人数、安全结论、兼容性和引用默认值都不能直接导入生产数据库作为真实事实。
 

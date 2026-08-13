@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import Card from '../components/Card';
 import SearchBar from '../components/SearchBar';
 import { FIELD_IDS, FILTER_GROUPS, FILTER_OPTIONS } from '../domain/catalog';
@@ -43,6 +43,7 @@ const ResourceSection = ({ id, title, items, activeFilterLabel, query }) => (
 
 const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
   const filterRailRef = useRef(null);
   const serializedParams = searchParams.toString();
   const requestedFields = searchParams.getAll('field');
@@ -178,6 +179,12 @@ const HomePage = () => {
           />
         </div>
       </section>
+
+      {location.state?.catalogNotice && (
+        <div className="container legacy-route-notice" role="status">
+          {location.state.catalogNotice}
+        </div>
+      )}
 
       <section className="field-filter-section" aria-labelledby="field-filter-title">
         <div className="container">

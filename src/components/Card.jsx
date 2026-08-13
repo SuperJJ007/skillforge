@@ -18,6 +18,7 @@ const getIconBg = (type) => {
 
 const Card = ({
   id,
+  slug,
   title,
   description,
   type,
@@ -31,7 +32,8 @@ const Card = ({
   publicationState = 'candidate',
 }) => (
   <Link
-    to={`/tool/${id}`}
+    to={`/tool/${slug}`}
+    data-resource-id={id}
     className={`card-container ${compact ? 'card-compact' : ''}`}
     data-resource-card={compact ? 'true' : undefined}
     data-primary-field={compact ? primaryFieldId : undefined}

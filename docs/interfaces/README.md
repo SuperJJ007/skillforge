@@ -4,8 +4,10 @@
 
 当前已实现的进程内边界：
 
+- Catalog identity：[`src/domain/catalogIdentity.js`](../../src/domain/catalogIdentity.js)，冻结资源/作者 UUID 与 slug，并统一供应本地 taxonomy 和逐资源分类。
 - Catalog domain：[`src/domain/catalog.js`](../../src/domain/catalog.js)，定义分类不变量与本地筛选/搜索语义。
 - Local repository：[`src/repositories/LocalResourceRepository.js`](../../src/repositories/LocalResourceRepository.js)，是旧 fixture 的唯一读取边界。
+- Legacy taxonomy：[`src/repositories/LegacyTaxonomyAdapter.js`](../../src/repositories/LegacyTaxonomyAdapter.js)，只管理版本化旧学科迁移、资源/作者路径保留和 retired route 合同，不供应退役页内容。
 - Catalog service：[`src/services/catalogService.js`](../../src/services/catalogService.js)，是当前页面调用的目录入口。
 
 它们是当前代码事实，但尚未声明为可独立发布的稳定合同。当前没有已实现的 HTTP API、事件或数据库接口；[系统架构中的 API](../architecture/system.md#7-api-合同) 仍是待实现设计。

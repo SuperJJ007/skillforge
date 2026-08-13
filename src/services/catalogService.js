@@ -9,16 +9,16 @@ export const catalogService = {
     return localResourceRepository.listResources();
   },
 
-  getResource(resourceId) {
-    return localResourceRepository.getResourceById(resourceId);
+  getResource(resourceSlug) {
+    return localResourceRepository.getResourceBySlug(resourceSlug);
   },
 
-  getAuthor(authorId) {
-    return localResourceRepository.getAuthorById(authorId);
+  getAuthor(authorSlug) {
+    return localResourceRepository.getAuthorBySlug(authorSlug);
   },
 
-  listResourcesByAuthor(authorId) {
-    return localResourceRepository.listResourcesByAuthor(authorId);
+  listResourcesByAuthor(authorSlug) {
+    return localResourceRepository.listResourcesByAuthorSlug(authorSlug);
   },
 
   searchResources(resources, query) {

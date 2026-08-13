@@ -5,9 +5,9 @@ import { catalogService } from '../services/catalogService';
 import './AuthorPage.css';
 
 const AuthorPage = () => {
-  const { id } = useParams();
-  const author = catalogService.getAuthor(id);
-  const resources = catalogService.listResourcesByAuthor(id);
+  const { slug } = useParams();
+  const author = catalogService.getAuthor(slug);
+  const resources = catalogService.listResourcesByAuthor(slug);
 
   useEffect(() => {
     window.scrollTo(0, 0);

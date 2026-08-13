@@ -29,6 +29,8 @@ npm run build
 ## 当前边界
 
 - `src/data.js` 是隔离的旧原型 fixture，只有 `src/repositories/LocalResourceRepository.js` 可以读取；页面和组件不得直接导入。
+- `src/domain/catalogIdentity.js` 冻结 11 条资源和 11 个署名的独立 UUID/slug，并作为 13 学科与逐资源分类的唯一本地来源。
+- 旧学科 URL 只通过 `LegacyTaxonomyAdapter` 进入版本化迁移；旧资源和作者 slug 保持为 canonical URL，Planner 与 Bench 保持 retired route。
 - 本地适配器只暴露候选条目的标题、简介、类型、署名、标签和分类；静态 `rating`、下载量、Stars、安装命令、兼容性、安全结论、Bench 与论文引用不会进入页面。
 - 登录、提交和 Admin 审核显示明确“尚未开放”；Planner、Bench 和旧学科页显示明确“已退役”，不会模拟成功或计算结果。
 - 首页、候选详情和署名页通过 `catalogService` 读取同一 repository；以后接入 HTTP API 时替换 repository，不让页面重新依赖 fixture。

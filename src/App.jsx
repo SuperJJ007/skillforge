@@ -19,10 +19,10 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/discipline/:id" element={<DisciplinePage />} />
-          <Route path="/tool/:id" element={<ToolDetailPage />} />
+          <Route path="/tool/:slug" element={<ToolDetailPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/submit" element={<SubmitPage />} />
-          <Route path="/author/:id" element={<AuthorPage />} />
+          <Route path="/author/:slug" element={<AuthorPage />} />
           <Route path="/planner" element={<PlannerPage />} />
           <Route path="/bench" element={<BenchPage />} />
           <Route path="/admin/review" element={<AdminReviewPage />} />
