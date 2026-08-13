@@ -152,17 +152,23 @@ const SourceProjectSidebar = ({ resource }) => {
 
   return (
     <div className="sidebar-panel truthful-sidebar source-project-sidebar">
-      <p className="truth-section-kicker">Community rating</p>
-      <div className="rating-empty" aria-label="暂无社区评分，评分功能尚未开放">
-        <div className="rating-stars" aria-hidden="true">☆☆☆☆☆</div>
-        <strong>暂无社区评分</strong>
-        <span>评分功能尚未开放</span>
+      <div className="source-summary-row source-rating-row">
+        <p className="truth-section-kicker">Community rating</p>
+        <div className="rating-empty" aria-label="暂无社区评分，评分功能尚未开放">
+          <div className="rating-stars" aria-hidden="true">☆☆☆☆☆</div>
+          <div className="rating-empty-copy">
+            <strong>暂无社区评分</strong>
+            <span>评分功能尚未开放</span>
+          </div>
+        </div>
       </div>
-      <p className="truth-section-kicker">License</p>
-      <div className="license-highlight">
-        <span>{licenseUndeclared ? '许可证' : '开源许可证'}</span>
-        <strong>{licenseUndeclared ? '来源未声明' : licenseSpdx}</strong>
-        <small>{licenseUndeclared ? '发布前需复核' : '仓库声明'}</small>
+      <div className="source-summary-row source-license-row">
+        <p className="truth-section-kicker">License</p>
+        <div className="license-highlight">
+          <span>{licenseUndeclared ? '许可证' : '开源许可证'}</span>
+          <strong>{licenseUndeclared ? '来源未声明' : licenseSpdx}</strong>
+          <small>{licenseUndeclared ? '发布前需复核' : '仓库声明'}</small>
+        </div>
       </div>
       <div className="source-project-meta">
         <div>
