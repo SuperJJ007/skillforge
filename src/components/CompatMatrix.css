@@ -1,0 +1,242 @@
+/* Compatibility & Environment Verification Matrix */
+.compat-section {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+}
+
+.compat-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.compat-section-header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.compat-verified-tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #ecfdf5;
+  color: #059669;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+.compat-section-sub {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.compat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.compat-panel {
+  background: #f9fafb;
+  border: 1px solid #f3f4f6;
+  border-radius: 10px;
+  padding: 1.25rem;
+  height: fit-content;
+}
+
+.compat-panel-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 1rem;
+}
+
+/* Host Compatibility Rows */
+.compat-host-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.compat-host-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #f3f4f6;
+  border-radius: 8px;
+  padding: 0.5rem 0.875rem;
+}
+
+.compat-host-name {
+  font-size: 0.875rem;
+  color: #111827;
+  font-weight: 500;
+}
+
+.compat-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 9999px;
+}
+
+.compat-status-icon {
+  font-size: 0.7rem;
+}
+
+.compat-status-yes {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.compat-status-partial {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.compat-status-no {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+/* Runtime Environment Rows */
+.compat-env-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px dashed #e5e7eb;
+}
+
+.compat-env-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.compat-env-label {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+.compat-env-value {
+  font-size: 0.85rem;
+  color: #111827;
+  font-weight: 500;
+  text-align: right;
+}
+
+.compat-env-value code {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 0.8rem;
+}
+
+.compat-os-pills {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.compat-os-pill {
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.compat-os-pill.supported {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.compat-os-pill.unsupported {
+  background: #fef2f2;
+  color: #dc2626;
+  text-decoration: line-through;
+}
+
+.compat-gpu-tag {
+  font-size: 0.8rem;
+}
+
+/* Permission Declaration */
+.compat-perm-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.compat-perm-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.compat-perm-dot {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  margin-top: 0.45rem;
+}
+
+/* Dependencies */
+.compat-dep-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.compat-dep-pill {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  color: #374151;
+  font-family: monospace;
+}
+
+@media (max-width: 760px) {
+  .compat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .compat-env-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  .compat-os-pills {
+    justify-content: flex-start;
+  }
+}

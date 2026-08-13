@@ -1,0 +1,507 @@
+/* Task Planner Page */
+.planner-page {
+  padding-bottom: 4rem;
+}
+
+/* ---------- Picker View ---------- */
+.planner-hero {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 4.5rem 0 3rem 0;
+}
+
+.planner-hero-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+}
+
+.planner-hero-sub {
+  font-size: 1.1rem;
+  color: #6b7280;
+  max-width: 640px;
+  margin: 0 auto 2rem auto;
+  line-height: 1.6;
+}
+
+.planner-search-box {
+  position: relative;
+  max-width: 720px;
+  margin: 0 auto 1.25rem auto;
+}
+
+.planner-search-box input {
+  width: 100%;
+  padding: 1rem 9rem 1rem 1.5rem;
+  border: 2px solid #111827;
+  border-radius: 9999px;
+  font-size: 1rem;
+  outline: none;
+  background: #ffffff;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.planner-search-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.planner-quick-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.planner-quick-btn {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 9999px;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.78rem;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.planner-quick-btn:hover {
+  border-color: #111827;
+  color: #111827;
+}
+
+.planner-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.planner-list-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.planner-reset-btn {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 9999px;
+  padding: 0.4rem 1.1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.planner-reset-btn:hover {
+  background: #e5e7eb;
+}
+
+/* Template Cards */
+.planner-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: all 0.2s ease;
+}
+
+.planner-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.planner-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.875rem;
+}
+
+.planner-card-icon {
+  font-size: 2rem;
+}
+
+.planner-card-discipline {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+.planner-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.planner-card-scenario {
+  font-size: 0.82rem;
+  color: #6b7280;
+  font-style: italic;
+  line-height: 1.55;
+  margin-bottom: 0.875rem;
+}
+
+.planner-card-tags {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.planner-card-tags span {
+  font-size: 0.72rem;
+  background: #f3f4f6;
+  color: #4b5563;
+  padding: 2px 9px;
+  border-radius: 9999px;
+}
+
+.planner-card-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  background: #f9fafb;
+  border: 1px solid #f3f4f6;
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-bottom: 1.25rem;
+  flex-grow: 1;
+}
+
+.planner-mini-step {
+  font-size: 0.75rem;
+  color: #4b5563;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.planner-card-cta {
+  width: 100%;
+  background: #111827;
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  padding: 0.65rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.planner-card-cta:hover {
+  background: #1f2937;
+}
+
+.planner-no-match {
+  text-align: center;
+  padding: 3rem 0;
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+/* ---------- Detail View ---------- */
+.planner-detail-header {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 2.5rem 0 2rem 0;
+}
+
+.planner-back-btn {
+  background: none;
+  border: none;
+  color: #4b5563;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 1.25rem;
+  transition: color 0.15s;
+}
+
+.planner-back-btn:hover {
+  color: #111827;
+}
+
+.planner-detail-title-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.planner-detail-icon {
+  font-size: 2.5rem;
+  background: #ffffff;
+  width: 68px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  flex-shrink: 0;
+}
+
+.planner-detail-title-row h1 {
+  font-size: 1.875rem;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.25rem;
+}
+
+.planner-detail-meta {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.planner-meta-chips {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.planner-meta-chip {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 9999px;
+  padding: 0.35rem 1rem;
+  font-size: 0.8rem;
+  color: #4b5563;
+}
+
+/* Pipeline Flow + Export Layout */
+.planner-detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 2.5rem;
+  padding-top: 2.5rem;
+  align-items: start;
+}
+
+.planner-flow {
+  display: flex;
+  flex-direction: column;
+}
+
+.planner-step-card {
+  display: flex;
+  gap: 1.25rem;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+}
+
+.planner-step-order {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  background: #111827;
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.planner-step-body {
+  flex-grow: 1;
+}
+
+.planner-step-name-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.4rem;
+}
+
+.planner-step-name-row h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.planner-step-type {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: #f3f4f6;
+  color: #4b5563;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.planner-step-desc {
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.planner-tool-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  transition: all 0.15s;
+  max-width: 100%;
+}
+
+.planner-tool-chip:hover {
+  border-color: #111827;
+  background: #ffffff;
+}
+
+.planner-tool-icon {
+  font-size: 1.1rem;
+}
+
+.planner-tool-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.planner-tool-author {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.planner-tool-arrow {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+/* Connector between steps */
+.planner-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.75rem 0;
+}
+
+.planner-connector-line {
+  width: 2px;
+  height: 18px;
+  background: #d1d5db;
+}
+
+.planner-connector-label {
+  background: #ecfdf5;
+  color: #059669;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 4px 14px;
+  border-radius: 9999px;
+  max-width: 100%;
+  text-align: center;
+}
+
+.planner-final-output {
+  background: #111827;
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+/* Export Panel */
+.planner-export-panel {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 20px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.03);
+  position: sticky;
+  top: 6rem;
+}
+
+.planner-export-panel h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.4rem;
+}
+
+.planner-export-sub {
+  font-size: 0.82rem;
+  color: #6b7280;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+}
+
+.planner-export-panel .cmd-box {
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.planner-export-panel .cmd-box code {
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.planner-export-panel .btn-download {
+  margin-top: 1rem;
+}
+
+.planner-export-note {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  line-height: 1.6;
+  margin-top: 1rem;
+}
+
+@media (max-width: 1000px) {
+  .planner-detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .planner-export-panel {
+    position: static;
+  }
+}

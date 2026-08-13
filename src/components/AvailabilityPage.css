@@ -1,0 +1,84 @@
+.availability-page {
+  display: grid;
+  min-height: 68vh;
+  padding: 5rem 0;
+  place-items: center;
+}
+
+.availability-shell {
+  width: min(760px, 100%);
+}
+
+.availability-status {
+  display: inline-flex;
+  margin-bottom: 2rem;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid #d1d5db;
+  border-radius: var(--radius-full);
+  background: #ffffff;
+  color: #4b5563;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.availability-eyebrow {
+  margin-bottom: 0.65rem;
+  color: #6b7280;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.availability-shell h1 {
+  max-width: 680px;
+  margin-bottom: 1rem;
+  font-size: clamp(2.25rem, 7vw, 4.5rem);
+  letter-spacing: -0.04em;
+}
+
+.availability-description {
+  max-width: 660px;
+  color: #4b5563;
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+.availability-details {
+  display: grid;
+  gap: 0.8rem;
+  max-width: 660px;
+  margin-top: 2rem;
+}
+
+.availability-details li {
+  position: relative;
+  padding-left: 1.35rem;
+  color: #6b7280;
+}
+
+.availability-details li::before {
+  position: absolute;
+  left: 0;
+  color: #111827;
+  content: '—';
+}
+
+.availability-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 2.5rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .availability-page {
+    min-height: 60vh;
+    padding: 3.5rem 0;
+  }
+
+  .availability-actions .btn {
+    width: 100%;
+  }
+}

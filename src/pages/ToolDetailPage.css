@@ -1,0 +1,221 @@
+.tool-detail-page {
+  padding: 2rem 0 6rem;
+}
+
+.breadcrumb {
+  margin-bottom: 2rem;
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.breadcrumb a {
+  color: #4b5563;
+}
+
+.breadcrumb a:hover {
+  color: #111827;
+  text-decoration: underline;
+}
+
+.breadcrumb .current {
+  color: #111827;
+  font-weight: 600;
+}
+
+.truthful-detail-layout {
+  display: grid;
+  align-items: start;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 3rem;
+}
+
+.tags-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.type-badge,
+.tag-pill {
+  padding: 0.28rem 0.7rem;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+}
+
+.type-badge {
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.tag-pill {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.detail-header-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.detail-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  font-size: 2.25rem;
+}
+
+.detail-title {
+  color: #111827;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
+.detail-author {
+  margin-top: 0.4rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.detail-author a {
+  color: #111827;
+  font-weight: 700;
+}
+
+.candidate-notice {
+  display: grid;
+  gap: 0.25rem;
+  margin: 1.5rem 0;
+  padding: 1rem 1.15rem;
+  border: 1px solid #dbe4ef;
+  border-radius: 14px;
+  background: #eef4fa;
+  color: #4b5563;
+  font-size: 0.875rem;
+}
+
+.candidate-notice strong {
+  color: #111827;
+}
+
+.detail-desc {
+  max-width: 780px;
+  margin-bottom: 2.5rem;
+  color: #4b5563;
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.truth-section-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.truth-section {
+  min-height: 190px;
+  padding: 1.5rem;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.truth-section-kicker {
+  margin-bottom: 0.65rem;
+  color: #9ca3af;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.truth-section h2,
+.truthful-sidebar h2 {
+  margin-bottom: 0.75rem;
+  color: #111827;
+  font-size: 1.15rem;
+}
+
+.truth-section p:last-child {
+  color: #6b7280;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.truthful-sidebar {
+  position: sticky;
+  top: 7rem;
+  padding: 1.75rem;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 8px 30px rgba(17, 24, 39, 0.04);
+}
+
+.evidence-status-list {
+  margin: 1.25rem 0 1.5rem;
+}
+
+.evidence-status-row {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.07);
+}
+
+.evidence-status-row span {
+  color: #6b7280;
+  font-size: 0.8rem;
+}
+
+.evidence-status-row strong {
+  color: #111827;
+  font-size: 0.86rem;
+}
+
+.truthful-sidebar-action {
+  width: 100%;
+}
+
+.detail-not-found,
+.author-not-found {
+  text-align: center;
+}
+
+.detail-not-found p,
+.author-not-found p {
+  margin: 0.75rem 0 2rem;
+  color: #6b7280;
+}
+
+@media (max-width: 900px) {
+  .truthful-detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .truthful-sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .tool-detail-page {
+    padding-top: 1.5rem;
+  }
+
+  .detail-header-row {
+    align-items: flex-start;
+  }
+
+  .truth-section-grid {
+    grid-template-columns: 1fr;
+  }
+}
