@@ -43,9 +43,9 @@ flowchart LR
 
 当前代码仍是静态前端基线，后续实现必须先承认这个边界：
 
-- `src/data.js` 仍保存目录、详情、Bench、GitHub Stars、作者、科研套装、Planner 模板和演示评分，但只有 `LocalResourceRepository` 可读取它。
-- `catalogIdentity.js` 已冻结 51 条资源和 21 个署名的独立 UUID/slug，并统一供应 13 学科与逐资源分类。其中 11 条属于旧原型迁移基线，40 条带人工采集的固定 commit 来源快照；它们都是本地候选，不是已发布数据库，也不代表运行验证。
-- `LegacyTaxonomyAdapter` 只处理 `biology / computer-science / physics` 旧学科 URL；`biology` 回到无筛选首页，不会机械重定向为 `life-sciences`。旧资源和作者 slug 保持 canonical。
+- 无来源的旧原型 fixture 已删除；当前静态目录不再把普通科研软件包装成 Skill、MCP 或 Plugin。
+- `catalogIdentity.js` 已冻结 40 条资源和 10 个署名的独立 UUID/slug，并统一供应 13 学科与逐资源分类。全部资源都带人工采集的固定 commit 来源快照；它们仍是本地候选，不是已发布数据库，也不代表运行验证。
+- `LegacyTaxonomyAdapter` 只处理 `biology / computer-science / physics` 旧学科 URL；`biology` 回到无筛选首页，不会机械重定向为 `life-sciences`。已删除的占位资源和署名 URL 不再保留伪 canonical 身份。
 - 详情页和作者页只展示候选目录字段与明确证据状态；来源已定位候选还展示 revision-bound 的项目自述事实，运行验证仍明确为空。作者署名不是登录账号或资源维护权限的同义词。
 - `/planner` 与 `/bench` 只渲染 retired page；`AgentScenariosSimulator` 仍是未挂载原型组件。
 - `LoginPage.jsx`、`SubmitPage.jsx` 和 `AdminReviewPage.jsx` 明确显示未开放，没有认证、API 或持久化；当前 Netlify 配置只负责 Vite 静态构建与 SPA 重定向。
@@ -712,16 +712,16 @@ Catalog/import 不能依赖人工插入 repository node ID。Admin `catalog-impo
 
 同一个 manifest preparation 的 item key、claimed target 与结果 hash 都要稳定；同 item 的 retry 递增 `validation_epoch`、清 current evidence并复用统一队列，不建立旁路抓取。Prepare 只入队，GitHub 额度不足时保持 `received` 并返回可查询状态。任何直接发布或 draft publish 都只能消费仍绑定目标且满足 freshness 的 request；失效证据必须重新 prepare/revalidate。
 
-现有 11 条资源通过版本化 `catalog.bootstrap.v1.json` 导入；`src/data.js` 只是迁移输入，不是生产事实来源。每条 manifest 记录显式保存固定 UUID、不可变 slug、canonical taxonomy、作者署名、主仓库身份和来源 URL。导入前 dry-run 必须：
+当前 40 条来源已定位候选通过版本化 `catalog.bootstrap.v1.json` 进入后端迁移；`src/data/sourceCandidates.js` 只负责组合固定来源快照，不是生产数据库。每条 manifest 记录显式保存固定 UUID、不可变 slug、canonical taxonomy、作者署名、主仓库身份、root/manifest path 和来源 URL。导入前 dry-run 必须：
 
-- 恰好盘点 11 条现有资源，每条得到 `publish | draft | exclude` 的明确结果。
+- 恰好盘点 40 条来源候选，每条得到 `publish | draft | exclude` 的明确结果。
 - 校验资源和作者 UUID/slug 唯一、13 学科映射合法、主作者和主仓库约束成立。
 - 仓库或署名来源尚未核实的资源只能导入为 `draft`，不能公开。
 - 标为 `publish` 的记录必须已有稳定 repository node ID、公开且 accessible 的主仓库、以及覆盖精确 source identity 的可保留 snapshot/validation result；同步子系统尚未产出这些证据时自动降为 `draft`，不能由导入脚本临时请求 GitHub 或伪造 node ID。
 - 排除现有 `rating`、`skillbench`、downloads、installedBy、兼容性、演化历史、引用数、GitHub Stars、安装命令和安全审计等演示事实。
-- 生成旧资源、作者和 taxonomy URL 的映射回归报告。
+- 生成候选资源、作者和 taxonomy URL 的映射回归报告。
 
-应用导入时验证 manifest JSON Schema、版本和 SHA-256，并要求每个 publish/draft item 引用同 manifest/item key 的 preparation request；结构或 preparation 映射错误时整批回滚。事务先按 UUID 排序锁定所有已解析 repository 行，再把 source canonical key 排序并依次取得同一个 `submission-source` advisory lock，最后锁业务行并重验 state revision 与跨表 source identity：只要发现活动 submission winner 或不属于本 manifest 固定 UUID 的 resource，就返回 `409 import_source_conflict` 并整批不写，不能让 import 与 accept/resolution 各自留下 winner。全部目录写入必须在单个数据库事务中完成；只有至少一条记录直接 published 并改变公开结果时才使全局 search revision 递增一次，纯 draft/exclude 导入不递增；draft 会原子绑定对应 catalog validation request，直接 publish 会消费 valid request并写 publication evidence。结果写入 `catalog_import_batches`，并强制 `input_count = published_count + draft_count + excluded_count = 11`。最小、无 PII 的 `catalog_import_receipts` 在 batch GC 后继续保留 manifest/result hash，直到该 schema version 正式 retire；相同 manifest 重跑只返回历史结果，永远不得生成新的资源、作者或评分。
+应用导入时验证 manifest JSON Schema、版本和 SHA-256，并要求每个 publish/draft item 引用同 manifest/item key 的 preparation request；结构或 preparation 映射错误时整批回滚。事务先按 UUID 排序锁定所有已解析 repository 行，再把 source canonical key 排序并依次取得同一个 `submission-source` advisory lock，最后锁业务行并重验 state revision 与跨表 source identity：只要发现活动 submission winner 或不属于本 manifest 固定 UUID 的 resource，就返回 `409 import_source_conflict` 并整批不写，不能让 import 与 accept/resolution 各自留下 winner。全部目录写入必须在单个数据库事务中完成；只有至少一条记录直接 published 并改变公开结果时才使全局 search revision 递增一次，纯 draft/exclude 导入不递增；draft 会原子绑定对应 catalog validation request，直接 publish 会消费 valid request并写 publication evidence。结果写入 `catalog_import_batches`，并强制 `input_count = published_count + draft_count + excluded_count = 40`。最小、无 PII 的 `catalog_import_receipts` 在 batch GC 后继续保留 manifest/result hash，直到该 schema version 正式 retire；相同 manifest 重跑只返回历史结果，永远不得生成新的资源、作者或评分。
 
 首个管理员只能通过一次性 deployment bootstrap 建立：目标用户先完成 GitHub 登录并经第 7.4 节的受信流程生成 active profile；仅 migration role 可调用 `bootstrap_first_admin(expected_profile_id, expected_github_user_id, bootstrap_request_id)`。函数第一步取得 `profile-governance` advisory transaction lock，再重验系统尚无 editor/admin、两个身份同时匹配，以唯一 `bootstrap_request_id` 幂等改角色并写 `profile_role_events(actor_type = bootstrap)`；不同 target 的并发调用最多一个成功。成功后部署迁移立即 revoke 该函数的 EXECUTE；日常角色变化只能由现任 admin 通过受控角色 RPC 完成，且禁止移除最后一个 active admin。
 
@@ -1286,14 +1286,14 @@ supabase/
 
 ## 13. 实施顺序
 
-1. **盘点身份与兼容边界**：冻结 11 条现有资源的稳定 `resource_id/slug`，建立 13 学科、`general`、旧分类和旧 URL 的逐项映射；先接 `LegacyTaxonomyAdapter`，暂不删除任何消费者。
+1. **盘点身份与兼容边界**：冻结 40 条来源候选的稳定 `resource_id/slug`，建立 13 学科、`general`、旧分类和旧 URL 的逐项映射；旧占位资源不进入迁移清单。
 2. **建立领域模型**：建立 authors、目录分类、搜索投影、仓库快照、评分、提交和队列表；把人工目录、GitHub、Bench、社区评分拆成独立结构。
 3. **通过演示事实生产门**：逐一检查详情页、所有 Card 模式、AuthorPage、SubmitPage、LoginPage、Planner、Bench 和 DisciplinePage；删除假登录/假入队，以及默认安装量、Stars、版本、仓库、兼容性、安全审计、引用/DOI、安装命令、“官方推荐”、自我进化、下载量、文件树和源码预览，未接真实来源的区块/路由关闭。
-4. **接数据库、只读 API 与中文搜索**：启用 PGroonga，完成列表/详情、游标和搜索回归；生成 11 条资源的 bootstrap manifest 与 dry-run 报告，但尚未通过受控导入前不发布。
+4. **接数据库、只读 API 与中文搜索**：启用 PGroonga，完成列表/详情、游标和搜索回归；生成 40 条来源候选的 bootstrap manifest 与 dry-run 报告，但尚未通过受控导入前不发布。
 5. **接唯一认证模型**：实现 Supabase Auth PKCE、Bearer JWT、RLS 与受控 RPC；替换假登录，不引入自管 Cookie Session。
-6. **接真实提交与审核工作台**：完成提交/补充资料、账号 admission、系统校验、review draft、Admin API、审核事件、原子发布与 `duplicate` 分支；此时只生成/复核 11 条目录 manifest，不发布缺 GitHub identity/snapshot 证据的记录。
+6. **接真实提交与审核工作台**：完成提交/补充资料、账号 admission、系统校验、review draft、Admin API、审核事件、原子发布与 `duplicate` 分支；此时只生成/复核 40 条目录 manifest，不发布缺 GitHub identity/snapshot 证据的记录。
 7. **接 GitHub 同步**：按唯一同步规范实现 Cron 唤醒、有界 Worker、通用字段和允许列表，再增加类型解析器、Webhook、已安装每日兜底和未安装分层调度。
-8. **准备并应用存量导入**：先由 Admin prepare 把 11 条 manifest target 经统一 resolution/sync/quota 生成可追溯证据，再执行 source-lock 仲裁和单事务 apply；未完成证据的条目可保持绑定 validation request 的 draft，后续只能经 publish-draft 发布。
+8. **准备并应用候选导入**：先由 Admin prepare 把 40 条 manifest target 经统一 resolution/sync/quota 生成可追溯证据，再执行 source-lock 仲裁和单事务 apply；未完成证据的条目可保持绑定 validation request 的 draft，后续只能经 publish-draft 发布。
 9. **接社区评分**：上线增删改、事务聚合、修改事件、卡片/详情展示、贝叶斯排序和滚动限流。
 10. **执行既有页面处置**：迁移 Author 与 Submit；按版本化路由表退役 Planner、Bench、legacy Discipline 和 Bundles；回归所有旧链接与 retired page 后才删除旧 taxonomy 和临时 adapter。
 11. **接独立证据**：只有在 Bench 或学术数据有来源、版本和复核流程后才恢复生产展示。
@@ -1306,7 +1306,7 @@ supabase/
 
 - 所有启用的 Home、Detail、Submit、Author 和 API 只使用一份 canonical taxonomy；公开 fields/tags 端点可驱动首页和提交表单，前端不存在第二份 hard-coded ID。Planner、Bench、legacy Discipline 和 Bundles 在首版生产关闭。旧 URL 路由表有逐项回归，`biology` 没有被错误地一对一改名。
 - `general` 与学科分类满足互斥不变量。
-- 11 条现有资源与全部作者署名均有明确迁移结果；作者实体、登录 profile 与 resource maintainer 权限保持分离。
+- 40 条来源候选与全部作者署名均有明确迁移结果；作者实体、登录 profile 与 resource maintainer 权限保持分离。
 - 页面不再生成安装量、Stars、版本、仓库、安全审计等事实。
 - 详情页、所有 Card 模式、AuthorPage、SubmitPage、LoginPage 和 retired page 均不泄露假成功状态或静态 Bench、兼容性、引用/DOI、安装命令、“官方推荐”、自我进化、下载量、文件树/源码预览等演示事实。
 - 中文标题、别名、标签和作者搜索命中正确；游标绑定 query/filter，PGroonga 索引在 2,000 条基准数据上满足性能目标。
@@ -1329,7 +1329,7 @@ supabase/
 - `needs_input` 补充资料后会重新校验，不能绕过解析直接进入 review 或 published。
 - review events 为 append-only；拒绝和补充请求具有可见原因且不泄露敏感数据，request ID 重放会校验 payload hash。
 - 首管理员 bootstrap 只能成功一次并写审计；日常角色/账号状态变更以及来自 `auth.users` 的级联删除都取得 governance lock，不能并发移除最后一名 active admin。
-- 11 条存量资源全部有 `publish/draft/exclude` 结果，计数满足 `11 = published + draft + excluded`；catalog prepare 可从 URL 解析 node ID并生成 target coverage，draft 后续发布路径可达。Apply 对 source keys 排序加锁并在活动 submission 冲突时整批失败；相同 manifest 在 batch GC 后仍由最小 receipt 幂等，只有导入中存在直接 published 的公开变化时 search revision 才递增一次，纯 draft/exclude 时不递增，演示事实导入数量为零。
+- 40 条来源候选全部有 `publish/draft/exclude` 结果，计数满足 `40 = published + draft + excluded`；catalog prepare 可从 URL 解析 node ID并生成 target coverage，draft 后续发布路径可达。Apply 对 source keys 排序加锁并在活动 submission 冲突时整批失败；相同 manifest 在 batch GC 后仍由最小 receipt 幂等，只有导入中存在直接 published 的公开变化时 search revision 才递增一次，纯 draft/exclude 时不递增，演示事实导入数量为零。
 - Author/tag/field 和既有资源 mutation 具有固定 schema、并发 revision 与审计；普通 submission accept 只能新建资源，不能携带任意 resource ID 更新存量资源。Bootstrap draft 只能由 admin-only publish transaction 在公开 access、精确 validation coverage 与 source lock 校验后发布。
 - Admin API 的匿名、普通用户、角色降级和同站 rewrite 都通过测试；所有 API rewrite 位于 SPA catch-all 之前，不会错误返回前端 HTML。
 - 提交账号 admission 的 3/min 与 10/滚动 24h 边界、幂等重放、`429 + Retry-After`、同仓库多用户/多资源 fan-in 均有并发测试；仓库级策略不会被攻击者用来锁死合法 submission。

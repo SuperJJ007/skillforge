@@ -34,9 +34,7 @@ const AuthorPage = () => {
           </div>
 
           <div className="author-candidate-notice" role="note">
-            {hasLocatedSource
-              ? '当前仅展示项目仓库中的候选署名关系；这不代表作者认领、维护权限或正式发布。'
-              : '当前仅展示旧迁移候选中的基础署名；作者身份、资源归属与来源尚未经过正式发布流程核验。'}
+            当前仅展示项目仓库中的候选署名关系；这不代表作者认领、维护权限或正式发布。
           </div>
 
           <div className="author-profile-card">

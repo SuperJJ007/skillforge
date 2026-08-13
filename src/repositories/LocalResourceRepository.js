@@ -1,4 +1,3 @@
-import { authorsData, disciplinesData } from '../data.js';
 import { sourceCandidateAuthors, sourceCandidateResources } from '../data/sourceCandidates.js';
 import { CATALOG_MODE, getResourceClassification } from '../domain/catalog.js';
 import { getAuthorIdentity, getResourceIdentity } from '../domain/catalogIdentity.js';
@@ -13,51 +12,6 @@ const cloneResource = (resource) => ({
     ? { sourceSnapshot: cloneSourceSnapshot(resource.sourceSnapshot) }
     : {}),
 });
-
-const toCatalogCandidate = (resource, legacyDisciplineId) => {
-  const identity = getResourceIdentity(resource.id);
-  if (!identity) throw new Error(`Missing frozen identity for legacy resource: ${resource.id}`);
-  if (identity.legacyDisciplineId !== legacyDisciplineId) {
-    throw new Error(`Legacy discipline mismatch for resource: ${resource.id}`);
-  }
-  if (identity.authorSlug !== resource.authorId) {
-    throw new Error(`Legacy author mismatch for resource: ${resource.id}`);
-  }
-
-  const authorIdentity = getAuthorIdentity(identity.authorSlug);
-  if (!authorIdentity) throw new Error(`Missing frozen author identity: ${identity.authorSlug}`);
-
-  return {
-    id: identity.id,
-    slug: identity.slug,
-    title: resource.title,
-    description: resource.description,
-    type: resource.type,
-    icon: resource.icon,
-    author: resource.author,
-    authorId: authorIdentity.id,
-    authorSlug: authorIdentity.slug,
-    tags: [...(resource.tags || [])],
-    ...getResourceClassification(identity.slug),
-    catalogMode: CATALOG_MODE,
-    publicationState: 'candidate',
-    evidence: {
-      catalogSource: 'legacy-prototype',
-      github: 'unavailable',
-      installation: 'unavailable',
-      compatibility: 'unavailable',
-      communityRating: 'unavailable',
-      benchmark: 'unavailable',
-      academicUsage: 'unavailable',
-    },
-  };
-};
-
-const legacyCatalogCandidates = disciplinesData.flatMap((discipline) => (
-  discipline.subcategories.flatMap((subcategory) => (
-    subcategory.items.map((resource) => toCatalogCandidate(resource, discipline.id))
-  ))
-));
 
 const toSourceCandidate = (resource) => {
   const identity = getResourceIdentity(resource.slug);
@@ -105,7 +59,6 @@ const toSourceCandidate = (resource) => {
 };
 
 const catalogCandidates = [
-  ...legacyCatalogCandidates,
   ...sourceCandidateResources.map(toSourceCandidate),
 ];
 
@@ -117,7 +70,6 @@ if (candidateIds.size !== catalogCandidates.length || candidateSlugs.size !== ca
 
 const candidatesBySlug = new Map(catalogCandidates.map((resource) => [resource.slug, resource]));
 const candidateAuthorsBySlug = new Map([
-  ...authorsData.map((author) => [author.id, author]),
   ...sourceCandidateAuthors.map((author) => [author.slug, author]),
 ]);
 

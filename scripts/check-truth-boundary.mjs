@@ -20,7 +20,6 @@ import { catalogService } from '../src/services/catalogService.js';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const sourceRoot = path.join(projectRoot, 'src');
-const allowedLegacyImporter = path.join(sourceRoot, 'repositories', 'LocalResourceRepository.js');
 
 const walk = async (directory) => {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -37,7 +36,7 @@ const violations = [];
 for (const file of sourceFiles) {
   const source = await readFile(file, 'utf8');
   const importsLegacyFixture = /from\s+['"][^'"]*\/data(?:\.js)?['"]/.test(source);
-  if (importsLegacyFixture && file !== allowedLegacyImporter) {
+  if (importsLegacyFixture) {
     violations.push(`${path.relative(projectRoot, file)} imports legacy data directly`);
   }
 
@@ -71,10 +70,8 @@ const forbiddenEvidenceValues = new Set(['verified', 'published', 'available']);
 const resources = catalogService.listResources();
 const resourceIdentities = listResourceIdentities();
 const authorIdentities = listAuthorIdentities();
-const legacyResourceCount = 11;
-const legacyAuthorCount = 11;
-const expectedResourceCount = legacyResourceCount + sourceCandidateResources.length;
-const expectedAuthorCount = legacyAuthorCount + sourceCandidateAuthors.length;
+const expectedResourceCount = sourceCandidateResources.length;
+const expectedAuthorCount = sourceCandidateAuthors.length;
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
 const reportDuplicates = (values, label) => {
@@ -82,7 +79,7 @@ const reportDuplicates = (values, label) => {
 };
 
 if (resources.length !== expectedResourceCount) {
-  violations.push(`expected ${legacyResourceCount} migration candidates and ${sourceCandidateResources.length} source candidates, received ${resources.length}`);
+  violations.push(`expected ${sourceCandidateResources.length} source candidates, received ${resources.length}`);
 }
 
 if (CATALOG_IDENTITY_VERSION !== 1 || LEGACY_ROUTE_VERSION !== 1) {
@@ -213,16 +210,9 @@ if (
 const legacyRoutes = legacyTaxonomyAdapter.listDisciplineRoutes();
 const preservedResourcePaths = legacyTaxonomyAdapter.listPreservedResourcePaths();
 const preservedAuthorPaths = legacyTaxonomyAdapter.listPreservedAuthorPaths();
-const legacyDisciplineIds = new Set(
-  resourceIdentities.map((identity) => identity.legacyDisciplineId).filter(Boolean),
-);
 reportDuplicates(legacyRoutes.map((route) => route.legacyDisciplineId), 'legacy discipline routes');
 reportDuplicates(preservedResourcePaths.map((route) => route.legacyPath), 'preserved resource paths');
 reportDuplicates(preservedAuthorPaths.map((route) => route.legacyPath), 'preserved author paths');
-
-if (legacyRoutes.length !== legacyDisciplineIds.size) {
-  violations.push('legacy discipline route table must exactly cover fixture disciplines');
-}
 
 if (preservedResourcePaths.length !== resourceIdentities.length) {
   violations.push('every frozen resource must have a preserved legacy path contract');
@@ -237,17 +227,15 @@ for (const route of [...preservedResourcePaths, ...preservedAuthorPaths]) {
   }
 }
 
-for (const legacyDisciplineId of legacyDisciplineIds) {
-  if (!legacyTaxonomyAdapter.getDisciplineRoute(legacyDisciplineId)) {
-    violations.push(`missing legacy discipline route: ${legacyDisciplineId}`);
-  }
-}
-
 const expectedLegacyRoutes = {
   biology: ['redirect_home', '/'],
   'computer-science': ['redirect_field', '/?field=computer-science'],
   physics: ['redirect_field', '/?field=physics-astronomy'],
 };
+
+if (legacyRoutes.length !== Object.keys(expectedLegacyRoutes).length) {
+  violations.push('legacy discipline route table must exactly cover the supported redirects');
+}
 
 for (const [legacyDisciplineId, [routeAction, targetPath]] of Object.entries(expectedLegacyRoutes)) {
   const route = legacyTaxonomyAdapter.getDisciplineRoute(legacyDisciplineId);

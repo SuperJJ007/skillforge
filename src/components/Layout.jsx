@@ -12,7 +12,7 @@ const Layout = ({ children }) => {
       <div className="prototype-notice" role="note" aria-label="当前数据状态">
         <div className="container prototype-notice-inner">
           <strong>前端基线</strong>
-          <span>当前目录包含旧迁移候选和来源已定位候选；认证、提交、评分、GitHub 同步与 Bench 尚未接入。</span>
+          <span>当前目录只展示来源已定位候选；认证、提交、评分、GitHub 同步与 Bench 尚未接入。</span>
         </div>
       </div>
 

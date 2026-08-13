@@ -153,11 +153,6 @@ const HomePage = () => {
     <div className="home-page theme-harbor">
       <section className="home-hero" aria-labelledby="home-title">
         <div className="container home-hero-inner">
-          <div className="hero-eyebrow">
-            <span className="hero-eyebrow-dot" aria-hidden="true" />
-            科研 Skill · MCP · Plugin
-          </div>
-
           <h1 id="home-title" className="title-3d" data-text="SciForge">
             SciForge
           </h1>
